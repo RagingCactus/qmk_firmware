@@ -1,6 +1,6 @@
 /*
    Based on http://www.keyboard-layout-editor.com/#/gists/c6c0ac051b2b118a34ef84ebadab54c7
-   https://github.com/qmk/qmk_firmware/blob/master/layouts/community/planck_mit/crs/keymap.c
+   https://github.com/qmk/qmk_firmware/blob/master/layouts/community/ortho_4x12/crs/keymap.c
 */
 #include QMK_KEYBOARD_H
 
