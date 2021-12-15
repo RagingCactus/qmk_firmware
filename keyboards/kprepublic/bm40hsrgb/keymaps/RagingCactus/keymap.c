@@ -42,14 +42,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |  GUI |  GUI | Alt  | Lower|    Space    |Raise|AltGr/[|   -  |   =  |   ]  |
+ * | Ctrl |  GUI |  GUI | Alt  | Lower|    Space    |Raise|AltGr/(|   -  |   =  |   )  |
  * `-----------------------------------------------------------------------------------'
  */
 [_QWERTY] = LAYOUT_planck_mit( \
   KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC, \
   KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, \
   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH, SFT_T(KC_ENT), \
-  KC_LCTL, KC_LGUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  RALT_T(KC_LBRC), KC_MINS, KC_EQL, CTL_T(KC_RBRC) \
+  KC_LCTL, KC_LGUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  RALT_T(KC_LPRN), KC_MINS, KC_EQL, RCTL_T(KC_RPRN) \
 ),
 
 /* Arrow
@@ -111,19 +111,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |  `~  |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  | Wh Up|RightC| M-Up | LeftC|QWERTY| Left | Down |  Up  | Right|  |   |   `  |
+ * | Del  |      |   -  | PGUP | Home | Del  | Left | Down |  Up  | Right|  |   |   `  |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      | Wh Dn| M-L  | M-Dn | M-R  |      |  -   |  =   |  [   |  ]   |  \   |      |
+ * |      |      |      | PGDN | End  |      |  -   |  =   |  [   |  ]   |  \   |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | App  |      |      |      |     Ins     |      | Home | PGDN | PGUP |  End |
+ * |      | App  | App  |      |      |     Ins     |      | Home | PGDN | PGUP |  End |
  * `-----------------------------------------------------------------------------------'
  */
-//  TODO: Nuke mouse keys and do good buttons for page up, down, home, end insert and delete instead!
 [_RAISE] = LAYOUT_planck_mit( \
-  KC_GRV ,   KC_EXLM,     KC_AT, KC_HASH,  KC_DLR, KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL, \
-   KC_DEL,   KC_WH_U,   KC_BTN2, KC_MS_U, KC_BTN1, QWERTY, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,  KC_PIPE, KC_GRV, \
-  _______,   KC_WH_D,   KC_MS_L, KC_MS_D, KC_MS_R, _______, KC_MINS, KC_EQL, KC_LBRC, KC_RBRC,  KC_BSLS, _______, \
-  _______,   KC_APP,   _______, _______, _______,        KC_INS,    _______, KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
+  KC_GRV ,   KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR, KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL, \
+   KC_DEL,   _______,  KC_MINS,  KC_PGUP, KC_HOME, KC_DEL, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,  KC_PIPE, KC_GRV, \
+  _______,   _______,  _______,  KC_PGDN, KC_END, _______, KC_MINS, KC_EQL, KC_LBRC, KC_RBRC,  KC_BSLS, _______, \
+  _______,   KC_APP,   KC_APP,   _______, _______,        KC_INS,    _______, KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
 ),
 
 /* Plover layer (http://opensteno.org)
