@@ -147,9 +147,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Adjust (Lower + Raise)
  * ,--------------------------------------------------------------------------------------.
- * | C-A-I|Qwerty|      |      |Reset |Macro0|      |      |         |      |PLOVER|C-A-D |
+ * | C-A-I|Qwerty|      |      |Reset |      |      |      |         |      |PLOVER|C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
- * | Caps | Arrow|      |Aud on|Audoff| Game |AGswap|AGnorm| PrtSc   |ScrLck| Break|      |
+ * | Caps | Arrow|      |Aud on|Audoff| Game |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff| Prev | Next | Mute | VolDn   | VolUp|      |      |
  * |------+------+------+------+------+------+------+------+---------+------+------+------|
@@ -157,13 +157,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_mit( \
-  LALT(LCTL(KC_INS)), QWERTY,   _______, _______, RESET, M(0),  _______, _______, _______, _______, PLOVER, LALT(LCTL(KC_DEL)), \
-  KC_CAPS, ARROW, _______, AU_ON,   AU_OFF,  GAME, AG_SWAP, AG_NORM,  KC_PSCR, KC_SLCK,  KC_PAUS,  _______, \
-  _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  KC_MPRV, KC_MNXT,  KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
-  RGB_TOG, _______, _______, _______, _______,       KC_MPLY,     _______, RGB_TOG, RGB_MOD , RGB_HUI , RGB_HUD \
+  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, RESET,   _______, _______, _______, _______, _______, PLOVER,  LALT(LCTL(KC_DEL)), \
+  KC_CAPS,            ARROW,   _______, AU_ON,   AU_OFF,  GAME,    _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
+  _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
+  RGB_TOG,            _______, _______, _______, _______,       KC_MPLY,    _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
 )
-
-
 };
 
 #ifdef AUDIO_ENABLE
