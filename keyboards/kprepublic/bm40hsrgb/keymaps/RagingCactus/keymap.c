@@ -4,7 +4,6 @@
 */
 #include QMK_KEYBOARD_H
 
-#include QMK_KEYBOARD_H
 #include "action_layer.h"
 #ifdef AUDIO_ENABLE
   #include "audio.h"
@@ -21,6 +20,7 @@ extern keymap_config_t keymap_config;
 #define _PLOVER 5
 #define _ADJUST 16
 
+// Simple custom keycodes
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
   ARROW,
@@ -32,6 +32,92 @@ enum custom_keycodes {
   EXT_PLV,
   LOWERED_GUI // GUI + LOWER, especially useful for GUI+Number shortcuts
 };
+
+// Tap Dances START
+/*
+
+// Tap Dance Keycodes
+enum tap_dances {
+    TD_GUI_LOWEREDGUI,
+};
+
+// Tap Dance states
+typedef enum {
+    TD_NONE,
+    TD_UNKNOWN,
+    TD_SINGLE_TAP,
+    TD_SINGLE_HOLD,
+    TD_DOUBLE_SINGLE_TAP,
+    TD_DOUBLE_HOLD
+} td_state_t;
+
+// Create a global instance of the tapdance state type
+static td_state_t td_state;
+
+// Determine the tapdance state to return
+td_state_t cur_dance(qk_tap_dance_state_t *state) {
+    if (state->count == 1) {
+        if (state->interrupted || !state->pressed) return TD_SINGLE_TAP;
+        // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
+        else return TD_SINGLE_HOLD;
+    } else if (state->count == 2) {
+        // TD_DOUBLE_SINGLE_TAP is to distinguish between typing "pepper", and actually wanting a double tap
+        // action when hitting 'pp'. Suggested use case for this return value is when you want to send two
+        // keystrokes of the key, and not the 'double tap' action/macro.
+        if (state->interrupted || !state->pressed) return TD_DOUBLE_SINGLE_TAP;
+        else return TD_DOUBLE_HOLD;
+    }
+
+    else return TD_UNKNOWN; // Any number higher than the maximum state value you return above
+}
+
+void gui_loweredgui_finished(qk_tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+      register_code(KC_LGUI);
+      break;
+    case TD_DOUBLE_SINGLE_TAP:
+      tap_code(KC_LGUI);
+      register_code(KC_LGUI);
+      break;
+    case TD_DOUBLE_HOLD:
+      register_code(KC_LGUI);
+      layer_on(_LOWER);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      break;
+    default:
+      break;
+  }
+}
+
+void gui_loweredgui_reset(qk_tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case TD_SINGLE_TAP:
+    case TD_SINGLE_HOLD:
+    case TD_DOUBLE_SINGLE_TAP:
+      unregister_code(KC_LGUI);
+      break;
+    case TD_DOUBLE_HOLD:
+      unregister_code(KC_LGUI);
+      layer_off(_LOWER);
+      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+      break;
+    default:
+      break;
+  }
+}
+
+// Tap Dance definitions
+qk_tap_dance_action_t tap_dance_actions[] = {
+    // Tap once for Escape, twice for Caps Lock
+    [TD_GUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_loweredgui_finished, gui_loweredgui_reset),
+};
+
+*/
+// Tap Dances END
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -169,7 +255,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 float tone_qwerty[][2]     = SONG(QWERTY_SOUND);
 float music_scale[][2]     = SONG(MUSIC_SCALE_SOUND);
 #endif
-
 
 void persistant_default_layer_set(uint16_t default_layer) {
   eeconfig_update_default_layer(default_layer);
