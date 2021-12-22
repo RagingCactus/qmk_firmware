@@ -29,7 +29,8 @@ enum custom_keycodes {
   RAISE,
   BACKLIT,
   PLOVER,
-  EXT_PLV
+  EXT_PLV,
+  LOWERED_GUI // GUI + LOWER, especially useful for GUI+Number shortcuts
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -42,14 +43,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |  GUI |  GUI | Alt  | Lower|    Space    |Raise|AltGr/-|Win/= |   [  |   ]  |
+ * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise|AltGr/-|Win/= |   [  |   ]  |
  * `-----------------------------------------------------------------------------------'
  */
 [_QWERTY] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,            KC_BSPC, \
-  KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN,         KC_QUOT, \
-  KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH,         RSFT_T(KC_ENT), \
-  KC_LCTL, KC_LGUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  RALT_T(KC_MINS), RGUI_T(KC_EQL),  KC_LBRC, RCTL_T(KC_RBRC) \
+  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,            KC_BSPC, \
+  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN,         KC_QUOT, \
+  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH,         RSFT_T(KC_ENT), \
+  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  RALT_T(KC_MINS), RGUI_T(KC_EQL),  KC_LBRC, RCTL_T(KC_RBRC) \
 ),
 
 /* Arrow
@@ -60,14 +61,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |  GUI |  GUI | Alt  | Lower|    Space    |Raise | Left | Down |  Up  |Right |
+ * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise | Left | Down |  Up  |Right |
  * `-----------------------------------------------------------------------------------'
  */
 [_ARROW] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC, \
-  KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, \
-  KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH, RSFT_T(KC_ENT), \
-  KC_LCTL, KC_LGUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT \
+  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC, \
+  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, \
+  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH, RSFT_T(KC_ENT), \
+  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT \
 ),
 
 /* Game
@@ -186,6 +187,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+
     case GAME:
       if (record->event.pressed) {
         #ifdef AUDIO_ENABLE
@@ -195,7 +197,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-
 
       case LOWER:
         if (record->event.pressed) {
@@ -207,6 +208,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
       return false;
       break;
+
     case RAISE:
       if (record->event.pressed) {
         layer_on(_RAISE);
@@ -217,6 +219,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+
     case BACKLIT:
       if (record->event.pressed) {
         register_code(KC_RSFT);
@@ -228,7 +231,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-     }
+
+    case LOWERED_GUI:
+      if (record->event.pressed) {
+        layer_on(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        register_code(KC_LGUI);
+      } else {
+        layer_off(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        unregister_code(KC_LGUI);
+      }
+      return false;
+      break;
+    }
   return true;
 }
 
