@@ -198,17 +198,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |  `~  |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  | PAUSE|   -  | PGUP | Home | Del  | Left | Down |  Up  | Right|  |   |   `  |
+ * | Del  | PAUSE|   -  | PGUP | Home |      | Left | Down |  Up  | Right|  |   |   `  |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |PRTSCR|      | PGDN | End  |      |  -   |  =   |  [   |  ]   |  \|  |      |
+ * |      |PRTSCR|      | PGDN | End  | Del  |  -   |  =   |  [   |  ]   |  \|  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      | App  | App  |      |      |     Ins     |      | Home | PGDN | PGUP |  End |
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_mit( \
-  KC_GRV ,   KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR, KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL, \
-   KC_DEL,   KC_PAUSE,  KC_MINS,  KC_PGUP, KC_HOME, KC_DEL, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,  KC_PIPE, KC_GRV, \
-  _______,   KC_PSCR,  _______,  KC_PGDN, KC_END, _______, KC_MINS, KC_EQL, KC_LBRC, KC_RBRC,  KC_BSLS, _______, \
+  KC_GRV ,   KC_EXLM,  KC_AT,    KC_HASH,  KC_DLR, KC_PERC,  KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL, \
+   KC_DEL,   KC_PAUSE,  KC_MINS,  KC_PGUP, KC_HOME, _______, KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT,  KC_PIPE, KC_GRV, \
+  _______,   KC_PSCR,  _______,  KC_PGDN, KC_END, KC_DEL,    KC_MINS, KC_EQL, KC_LBRC, KC_RBRC,  KC_BSLS, _______, \
   _______,   KC_APP,   KC_APP,   _______, _______,        KC_INS,    _______, KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
 ),
 
