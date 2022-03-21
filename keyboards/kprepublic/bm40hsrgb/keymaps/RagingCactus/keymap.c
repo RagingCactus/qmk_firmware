@@ -30,11 +30,10 @@ enum custom_keycodes {
 };
 
 // Tap Dances START
-/*
 
 // Tap Dance Keycodes
 enum tap_dances {
-    TD_GUI_LOWEREDGUI,
+    TD_ALT_LOWEREDALT,
 };
 
 // Tap Dance states
@@ -47,8 +46,16 @@ typedef enum {
     TD_DOUBLE_HOLD
 } td_state_t;
 
+typedef struct {
+    bool       did_enable_layer;
+    td_state_t state;
+} td_tap_t;
+
 // Create a global instance of the tapdance state type
-static td_state_t td_state;
+static td_tap_t td_lalt_state = {
+    .did_enable_layer = false,
+    .state = TD_NONE
+};
 
 // Determine the tapdance state to return
 td_state_t cur_dance(qk_tap_dance_state_t *state) {
@@ -67,52 +74,57 @@ td_state_t cur_dance(qk_tap_dance_state_t *state) {
     else return TD_UNKNOWN; // Any number higher than the maximum state value you return above
 }
 
-void gui_loweredgui_finished(qk_tap_dance_state_t *state, void *user_data) {
-  td_state = cur_dance(state);
-  switch (td_state) {
-    case TD_SINGLE_TAP:
-    case TD_SINGLE_HOLD:
-      register_code(KC_LGUI);
-      break;
-    case TD_DOUBLE_SINGLE_TAP:
-      tap_code(KC_LGUI);
-      register_code(KC_LGUI);
-      break;
-    case TD_DOUBLE_HOLD:
-      register_code(KC_LGUI);
-      layer_on(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
-      break;
-    default:
-      break;
-  }
+void alt_loweredalt_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_lalt_state.state = cur_dance(state);
+    switch (td_lalt_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+            register_code16(KC_LALT);
+            break;
+        case TD_DOUBLE_SINGLE_TAP:
+            tap_code16(KC_LALT);
+            register_code16(KC_LALT);
+            break;
+        case TD_DOUBLE_HOLD:
+            register_code16(KC_LALT);
+            if (!layer_state_is(_LOWER)) {
+                layer_on(_LOWER);
+                td_lalt_state.did_enable_layer = true;
+            }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            break;
+        default:
+            break;
+    }
 }
 
-void gui_loweredgui_reset(qk_tap_dance_state_t *state, void *user_data) {
-  td_state = cur_dance(state);
-  switch (td_state) {
-    case TD_SINGLE_TAP:
-    case TD_SINGLE_HOLD:
-    case TD_DOUBLE_SINGLE_TAP:
-      unregister_code(KC_LGUI);
-      break;
-    case TD_DOUBLE_HOLD:
-      unregister_code(KC_LGUI);
-      layer_off(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
-      break;
-    default:
-      break;
-  }
+void alt_loweredalt_reset(qk_tap_dance_state_t *state, void *user_data) {
+    td_lalt_state.state = cur_dance(state);
+    switch (td_lalt_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+        case TD_DOUBLE_SINGLE_TAP:
+            unregister_code16(KC_LALT);
+            break;
+        case TD_DOUBLE_HOLD:
+            unregister_code16(KC_LALT);
+            break;
+        default:
+            break;
+    }
+
+    if (td_lalt_state.did_enable_layer) {
+        layer_off(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        td_lalt_state.did_enable_layer = false;
+    }
 }
 
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    // Tap once for Escape, twice for Caps Lock
-    [TD_GUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_loweredgui_finished, gui_loweredgui_reset),
+    [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
 };
 
-*/
 // Tap Dances END
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -125,35 +137,35 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise |AltGr | Win  |      | Ctrl |
+ * | Ctrl |LOWGUI|  GUI | TDALT| Lower|    Space    |Raise |AltGr | Win  |      | Ctrl |
  * `-----------------------------------------------------------------------------------'
  * TODO: consider moving a layer for meta stuff to the left of RCTL and use adjust as a normal functional layer
  */
 [_QWERTY] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,     KC_P,     KC_BSPC, \
-  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,     KC_SCLN,  KC_QUOT, \
-  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT,   KC_SLSH,  RSFT_T(KC_ENT), \
-  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
+  KC_ESC,  KC_Q,        KC_W,    KC_E,                  KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,     KC_P,     KC_BSPC, \
+  KC_TAB,  KC_A,        KC_S,    KC_D,                  KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,     KC_SCLN,  KC_QUOT, \
+  KC_LSFT, KC_Z,        KC_X,    KC_C,                  KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT,   KC_SLSH,  RSFT_T(KC_ENT), \
+  KC_LCTL, LOWERED_GUI, KC_LGUI, TD(TD_ALT_LOWEREDALT), LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
 ),
 
-/* Game
+/* Game (Qwerty with no tapdances and stuff)
  * ,-----------------------------------------------------------------------------------.
- * |   1  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
+ * | Esc  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Alt  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
+ * | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |Shift |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |   4  |   3  |   2  | Lower|    Space    |Raise | Left | Down |  Up  | Right|
+ * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise |AltGr | Win  |      | Ctrl |
  * `-----------------------------------------------------------------------------------'
+ * TODO: consider moving a layer for meta stuff to the left of RCTL and use adjust as a normal functional layer
  */
 [_GAME] = LAYOUT_planck_mit( \
-     KC_1,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC, \
-  KC_LALT,   KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, \
-  KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH, _______ , \
-  KC_LCTL,   KC_4,    KC_3,    KC_2,    LOWER,       KC_SPC,       RAISE,  KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT \
+  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,     KC_P,     KC_BSPC, \
+  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,     KC_SCLN,  KC_QUOT, \
+  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT,   KC_SLSH,  KC_ENT, \
+  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
 ),
-
 
 /* Lower   (switched to # because KP# were weird in terminal emulators)
  * ,-----------------------------------------------------------------------------------.
@@ -196,7 +208,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,--------------------------------------------------------------------------------------.
  * | C-A-I|Qwerty|      |      |Reset |      |      |      |         |      |      |C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
- * | Caps |      |      |Aud on|Audoff| Game |      |      | PrtSc   |ScrLck| Break|      |
+ * | Caps |GAME  |      |Aud on|Audoff|      |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff| Prev | Next | Mute | VolDn   | VolUp|      |      |
  * |------+------+------+------+------+------+------+------+---------+------+------+------|
@@ -205,7 +217,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_planck_mit( \
   LALT(LCTL(KC_INS)), QWERTY,  _______, _______, RESET,   _______, _______, _______, _______, _______, _______,  LALT(LCTL(KC_DEL)), \
-  KC_CAPS,            _______,   _______, AU_ON,   AU_OFF,  GAME,    _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
+  KC_CAPS,            GAME,    _______, AU_ON,   AU_OFF,  _______, _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
   _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
   RGB_TOG,            _______, _______, _______, _______,       KC_MPLY,    _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
 )
