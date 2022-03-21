@@ -297,3 +297,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void matrix_init_user(void) {
 
 }
+
+void rgb_matrix_indicators_kb(void) {
+    switch(get_highest_layer(layer_state | default_layer_state)) {
+        case _ADJUST:
+            switch (biton32(default_layer_state)) {
+                case _QWERTY:
+                    rgb_matrix_set_color(1, RGB_GREEN);
+                    rgb_matrix_set_color(13, 32, 32, 32);
+                    break;
+                case _GAME:
+                    rgb_matrix_set_color(1, 32, 32, 32);
+                    rgb_matrix_set_color(13, RGB_RED);
+                    break;
+            }
+            break;
+        default:
+            break;
+    }
+}
