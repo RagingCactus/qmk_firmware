@@ -34,6 +34,7 @@ enum custom_keycodes {
 // Tap Dance Keycodes
 enum tap_dances {
     TD_ALT_LOWEREDALT,
+    TD_HRESET, // Hold reset
 };
 
 // Tap Dance states
@@ -120,9 +121,24 @@ void alt_loweredalt_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_state_t tap_state = cur_dance(state);
+    switch (tap_state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+            reset_keyboard();
+            break;
+        case TD_DOUBLE_SINGLE_TAP:
+        case TD_DOUBLE_HOLD:
+        default:
+            break;
+    }
+}
+
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
+    [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, hreset_finished, NULL, 2000), // Delayed reset so I stop pressing it by accident
 };
 
 // Tap Dances END
@@ -206,7 +222,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Adjust (Lower + Raise)
  * ,--------------------------------------------------------------------------------------.
- * | C-A-I|Qwerty|      |      |Reset |      |      |      |         |      |      |C-A-D |
+ * | C-A-I|Qwerty|      |      |HRESET|      |      |      |         |      |      |C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
  * | Caps |GAME  |      |Aud on|Audoff|      |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
@@ -216,10 +232,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_mit( \
-  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, RESET,   _______, _______, _______, _______, _______, _______,  LALT(LCTL(KC_DEL)), \
-  KC_CAPS,            GAME,    _______, AU_ON,   AU_OFF,  _______, _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
-  _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
-  RGB_TOG,            _______, _______, _______, _______,       KC_MPLY,    _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
+  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, TD(TD_HRESET), _______, _______, _______, _______, _______, _______, LALT(LCTL(KC_DEL)), \
+  KC_CAPS,            GAME,    _______, AU_ON,   AU_OFF,        _______, _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
+  _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,        KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
+  RGB_TOG,            _______, _______, _______, _______,            KC_MPLY,     _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
 )
 };
 
