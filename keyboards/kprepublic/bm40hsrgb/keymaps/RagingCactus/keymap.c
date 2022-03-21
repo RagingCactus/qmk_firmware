@@ -67,7 +67,7 @@ td_state_t cur_dance(qk_tap_dance_state_t *state) {
         // TD_DOUBLE_SINGLE_TAP is to distinguish between typing "pepper", and actually wanting a double tap
         // action when hitting 'pp'. Suggested use case for this return value is when you want to send two
         // keystrokes of the key, and not the 'double tap' action/macro.
-        if (state->interrupted || !state->pressed) return TD_DOUBLE_SINGLE_TAP;
+        if (!state->pressed) return TD_DOUBLE_SINGLE_TAP;
         else return TD_DOUBLE_HOLD;
     }
 
