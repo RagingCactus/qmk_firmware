@@ -13,22 +13,18 @@
 extern keymap_config_t keymap_config;
 
 #define _QWERTY 0
-#define _ARROW  1
-#define _GAME   2
-#define _LOWER 3
-#define _RAISE 4
-#define _PLOVER 5
+#define _GAME 1
+#define _LOWER 2
+#define _RAISE 3
 #define _ADJUST 16
 
 // Simple custom keycodes
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
-  ARROW,
   GAME,
   LOWER,
   RAISE,
   BACKLIT,
-  PLOVER,
   EXT_PLV,
   LOWERED_GUI // GUI + LOWER, especially useful for GUI+Number shortcuts
 };
@@ -140,24 +136,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
 ),
 
-/* Arrow
- * ,-----------------------------------------------------------------------------------.
- * | Esc  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise | Left | Down |  Up  |Right |
- * `-----------------------------------------------------------------------------------'
- */
-[_ARROW] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,   KC_P,    KC_BSPC, \
-  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,   KC_SCLN, KC_QUOT, \
-  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT, KC_SLSH, RSFT_T(KC_ENT), \
-  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT \
-),
-
 /* Game
  * ,-----------------------------------------------------------------------------------.
  * |   1  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
@@ -214,31 +192,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,   KC_APP,   KC_APP,   _______, _______,        KC_INS,     _______,  KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
 ),
 
-/* Plover layer (http://opensteno.org)
- * ,-----------------------------------------------------------------------------------.
- * |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |   S  |   T  |   P  |   H  |   *  |   *  |   F  |   P  |   L  |   T  |   D  |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |   S  |   K  |   W  |   R  |   *  |   *  |   R  |   B  |   G  |   S  |   Z  |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Exit |      |      |   A  |   O  |             |   E  |   U  |      |      |      |
- * `-----------------------------------------------------------------------------------'
- */
-
-[_PLOVER] = LAYOUT_planck_mit ( \
-  KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1   , \
-  XXXXXXX, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, \
-  XXXXXXX, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, \
-  EXT_PLV, XXXXXXX, XXXXXXX, KC_C,    KC_V,        XXXXXXX,      KC_N,    KC_M,    XXXXXXX, XXXXXXX, XXXXXXX \
-),
-
-
 /* Adjust (Lower + Raise)
  * ,--------------------------------------------------------------------------------------.
- * | C-A-I|Qwerty|      |      |Reset |      |      |      |         |      |PLOVER|C-A-D |
+ * | C-A-I|Qwerty|      |      |Reset |      |      |      |         |      |      |C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
- * | Caps | Arrow|      |Aud on|Audoff| Game |      |      | PrtSc   |ScrLck| Break|      |
+ * | Caps |      |      |Aud on|Audoff| Game |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff| Prev | Next | Mute | VolDn   | VolUp|      |      |
  * |------+------+------+------+------+------+------+------+---------+------+------+------|
@@ -246,8 +204,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_mit( \
-  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, RESET,   _______, _______, _______, _______, _______, PLOVER,  LALT(LCTL(KC_DEL)), \
-  KC_CAPS,            ARROW,   _______, AU_ON,   AU_OFF,  GAME,    _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
+  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, RESET,   _______, _______, _______, _______, _______, _______,  LALT(LCTL(KC_DEL)), \
+  KC_CAPS,            _______,   _______, AU_ON,   AU_OFF,  GAME,    _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
   _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
   RGB_TOG,            _______, _______, _______, _______,       KC_MPLY,    _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
 )
