@@ -316,7 +316,15 @@ void matrix_init_user(void) {
 
 void rgb_matrix_indicators_kb(void) {
     switch(get_highest_layer(layer_state | default_layer_state)) {
+        case _LOWER:
+            rgb_matrix_set_color(40, RGB_BLUE); // LOWER
+            break;
+        case _RAISE:
+            rgb_matrix_set_color(42, RGB_BLUE); // RAISE
+            break;
         case _ADJUST:
+            rgb_matrix_set_color(40, RGB_PURPLE); // LOWER
+            rgb_matrix_set_color(42, RGB_PURPLE); // RAISE
             switch (biton32(default_layer_state)) {
                 case _QWERTY:
                     rgb_matrix_set_color(1, RGB_GREEN);
