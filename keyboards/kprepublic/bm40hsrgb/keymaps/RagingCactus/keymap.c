@@ -125,6 +125,7 @@ void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
     td_state_t tap_state = cur_dance(state);
     switch (tap_state) {
         case TD_SINGLE_TAP:
+            break;
         case TD_SINGLE_HOLD:
             reset_keyboard();
             break;
