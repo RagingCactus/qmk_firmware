@@ -24,7 +24,6 @@ enum layers {
 
 enum custom_keycodes {
     KC_QWERTY = SAFE_RANGE,
-    KC_NUM,
     KC_FUNC,
 };
 
@@ -97,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
   [_SYSTEM] = LAYOUT(
-  XXXXXXX , XXXXXXX,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX , XXXXXXX,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     RGB_TOG, RGB_MOD, RGB_VAI, RGB_VAD, XXXXXXX, XXXXXXX,
   RESET  , XXXXXXX,KC_QWERTY,XXXXXXX,XXXXXXX,KC_ASTG,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX , XXXXXXX,XXXXXXX, XXXXXXX,    XXXXXXX,  XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX , XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX,  XXXXXXX, XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -163,12 +162,14 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return rotation;
 }
 
-void oled_task_user(void) {
+bool oled_task_user(void) {
     if (is_keyboard_master()) {
         print_status_narrow();
     } else {
         render_logo();
     }
+
+    return false;
 }
 
 #endif
@@ -189,29 +190,27 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 #ifdef ENCODER_ENABLE
+static fast_timer_t last_encoding_time = 0;
+static const fast_timer_t ENCODER_DEBOUNCE = 10;
+static const fast_timer_t ENCODER_DIRECTION_CHANGE_DEBOUNCE = 200;
+static bool last_encoder_clockwise = true;
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
-        }
-    } else if (index == 1) {
-        if (clockwise) {
-            if (get_mods() & MOD_MASK_CTRL) {
-                tap_code(KC_MPRV);
-            } else {
-                tap_code(KC_VOLD);
-            }
+    // Adapted and changed from https://www.reddit.com/r/olkb/comments/tz4tek/encoder_debouncing_is_easy/
+    fast_timer_t now = timer_read_fast();
+    if (TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DEBOUNCE) {
+        return false;
+    }
+    if (clockwise != last_encoder_clockwise && TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DIRECTION_CHANGE_DEBOUNCE) {
+        return false;
+    }
+    last_encoding_time = timer_read_fast();
+    last_encoder_clockwise = clockwise;
 
-        } else {
-            if (get_mods() & MOD_MASK_CTRL) {
-                tap_code(KC_MNXT);
-            } else {
-                tap_code(KC_VOLU);
-            }
-        }
+    if (clockwise) {
+        tap_code(KC_MS_WH_DOWN);
+    } else {
+        tap_code(KC_MS_WH_UP);
     }
     return true;
 }
