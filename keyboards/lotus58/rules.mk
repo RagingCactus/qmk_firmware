@@ -2,20 +2,37 @@
 MCU = atmega32u4
 
 # Bootloader selection
-BOOTLOADER = caterina
+# BOOTLOADER = caterina // default for pro micro
+BOOTLOADER = qmk-dfu
 
-# Build Options
-#   change yes to no to disable
+## Options ##
 BOOTMAGIC_ENABLE = yes     # Virtual DIP switch configuration
 EXTRAKEY_ENABLE = yes       # Audio control and System control
+MOUSEKEY_ENABLE = yes # Scrolling for encoders
+
 CONSOLE_ENABLE = no         # Console for debug
 COMMAND_ENABLE = no         # Commands for debug and configuration
 
-NKRO_ENABLE = yes            # USB Nkey Rollover
-RGBLIGHT_ENABLE = yes        # Enable keyboard RGB underglow
+LTO_ENABLE = yes
+
+SPLIT_KEYBOARD = yes
 
 ENCODER_ENABLE = yes
-OLED_ENABLE = yes
+OLED_ENABLE = no
+
+# RGBLIGHT_ENABLE = yes
+# RGBLIGHT_DRIVER = WS2812 # Actually SK6812 mini-E, but should be compatible...
+
+RGB_MATRIX_ENABLE = yes
+RGB_MATRIX_DRIVER = WS2812 # Actually SK6812 mini-E, but should be compatible...
+
+AUTO_SHIFT_ENABLE = no
+NKRO_ENABLE = yes
 TAP_DANCE_ENABLE = yes
-AUTO_SHIFT_ENABLE = yes
-SPLIT_KEYBOARD = yes
+
+# Debounce eagerly (report change immediately) to keep latency low
+# See https://michael.stapelberg.ch/posts/2021-05-08-keyboard-input-latency-qmk-kinesis/#eagerdebounce
+DEBOUNCE_TYPE = sym_eager_pk
+
+# DEBUG
+# CONSOLE_ENABLE = yes
