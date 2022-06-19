@@ -20,7 +20,8 @@
 #define _GAME 1
 #define _LOWER 2
 #define _RAISE 3
-#define _ADJUST 16
+#define _LOWERGAME 4
+#define _ADJUST 7
 
 // Simple custom keycodes
 enum custom_keycodes {
@@ -28,6 +29,7 @@ enum custom_keycodes {
   GAME,
   LOWER,
   RAISE,
+  LOWERGAME,
   BACKLIT,
   EXT_PLV,
   LOWERED_GUI // GUI + LOWER, especially useful for GUI+Number shortcuts
@@ -38,6 +40,7 @@ enum custom_keycodes {
 // Tap Dance Keycodes
 enum tap_dances {
     TD_ALT_LOWEREDALT,
+    TD_GUI_LOWEREDGUI,
     TD_HRESET, // Hold reset
 };
 
@@ -58,6 +61,11 @@ typedef struct {
 
 // Create a global instance of the tapdance state type
 static td_tap_t td_lalt_state = {
+    .did_enable_layer = false,
+    .state = TD_NONE
+};
+
+static td_tap_t td_lgui_state = {
     .did_enable_layer = false,
     .state = TD_NONE
 };
@@ -125,6 +133,52 @@ void alt_loweredalt_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void gui_loweredgui_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_lgui_state.state = cur_dance(state);
+    switch (td_lgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+            register_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_SINGLE_TAP:
+            tap_code16(KC_LGUI);
+            register_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            register_code16(KC_LGUI);
+            if (!layer_state_is(_LOWER)) {
+                layer_on(_LOWER);
+                td_lgui_state.did_enable_layer = true;
+            }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            break;
+        default:
+            break;
+    }
+}
+
+void gui_loweredgui_reset(qk_tap_dance_state_t *state, void *user_data) {
+    td_lgui_state.state = cur_dance(state);
+    switch (td_lgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+        case TD_DOUBLE_SINGLE_TAP:
+            unregister_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            unregister_code16(KC_LGUI);
+            break;
+        default:
+            break;
+    }
+
+    if (td_lgui_state.did_enable_layer) {
+        layer_off(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        td_lgui_state.did_enable_layer = false;
+    }
+}
+
 void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
     td_state_t tap_state = cur_dance(state);
     switch (tap_state) {
@@ -143,6 +197,7 @@ void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
+    [TD_GUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_loweredgui_finished, gui_loweredgui_reset),
     [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, hreset_finished, NULL, 2000), // Delayed reset so I stop pressing it by accident
 };
 
@@ -157,10 +212,10 @@ qk_tap_dance_action_t tap_dance_actions[] = {
  * |------+------+------+------+------+------|  \___/      \___/  |------+------+------+------+------+-------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |                    |   H  |   J  |   K  |   L  |   ;  |   '   |
  * |------+------+------+------+------+------|-------.    ,-------|------+------+------+------+------+-------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |       |    |       |   N  |   M  |   ,  |   .  |   /  | Enter |
+ * | Ctrl |   Z  |   X  |   C  |   V  |   B  |GUI/Win|    |       |   N  |   M  |   ,  |   .  |   /  | Ctrl  |
  * `-----------------------------------------|-------/    \-------|------------------------------------------'
- *                    | Win  | Alt  | Lower / Space /      \ Ctrl  \ | Raise|AltGr |      |
- *                    | Gui  |Lowalt|      |       /        \       \|      |      |      |
+ *                    | Alt  | Shift | Space / LOWER /     \ Raise \ | Shift|AltGr | Win  |
+ *                    | TDALT|       /     |       /        \       \|      |      | Gui  |
  *                    `-------------------'-------'          '-------'--------------------'
  */
 
@@ -170,38 +225,46 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX,           XXXXXXX, XXXXXXX,                             XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX,  XXXXXXX,  XXXXXXX,
    KC_ESC,  KC_Q,    KC_W,      KC_E,              KC_R,    KC_T,                             KC_Y,    KC_U,      KC_I,    KC_O,     KC_P,     KC_BSPC,
    KC_TAB,  KC_A,    KC_S,      KC_D,              KC_F,    KC_G,                             KC_H,    KC_J,      KC_K,    KC_L,     KC_SCLN,  KC_QUOT,
-   KC_LSFT, KC_Z,    KC_X,      KC_C,              KC_V,    KC_B, XXXXXXX,          XXXXXXX,  KC_N,    KC_M,      KC_COMM, KC_DOT,   KC_SLSH,  RSFT_T(KC_ENT),
-     XXXXXXX, KC_LGUI,   TD(TD_ALT_LOWEREDALT),    KC_SPC,  LOWER,      KC_RCTRL, RAISE, KC_RALT,  XXXXXXX,   XXXXXXX
+   KC_LCTL, KC_Z,    KC_X,      KC_C,              KC_V,    KC_B, TD(TD_GUI_LOWEREDGUI),          XXXXXXX,  KC_N,    KC_M,      KC_COMM, KC_DOT,   KC_SLSH,  KC_RCTL,
+                XXXXXXX, TD(TD_ALT_LOWEREDALT), KC_LSFT, KC_SPC, LOWER,          RAISE   , RSFT_T(KC_ENT), KC_RALT,   TD(TD_GUI_LOWEREDGUI),   XXXXXXX
 ),
 
 [_GAME] = LAYOUT(
    KC_GRV,  KC_1,    KC_2,      KC_3,              KC_4,    KC_5,                             KC_6,    KC_7,      KC_8,    KC_9,   KC_0,    KC_MINS,
    KC_ESC,  KC_Q,    KC_W,      KC_E,              KC_R,    KC_T,                             KC_Y,    KC_U,      KC_I,    KC_O,     KC_P,     KC_BSPC,
    KC_TAB,  KC_A,    KC_S,      KC_D,              KC_F,    KC_G,                             KC_H,    KC_J,      KC_K,    KC_L,     KC_SCLN,  KC_QUOT,
-   KC_LSFT, KC_Z,    KC_X,      KC_C,              KC_V,    KC_B, XXXXXXX,          XXXXXXX,  KC_N,    KC_M,      KC_COMM, KC_DOT,   KC_SLSH,  KC_ENT,
-                       XXXXXXX, KC_LGUI, KC_LALT, KC_SPC, LOWER,                    KC_RCTRL, RAISE, KC_RALT,  XXXXXXX,   XXXXXXX
+   KC_LCTL, KC_Z,    KC_X,      KC_C,              KC_V,    KC_B, KC_LGUI,          XXXXXXX,  KC_N,    KC_M,      KC_COMM, KC_DOT,   KC_SLSH,  KC_RCTL,
+                XXXXXXX, KC_LALT, KC_LSFT, KC_SPC, LOWERGAME,                       RAISE   , KC_ENT, KC_RALT,   KC_RGUI,   XXXXXXX
 ),
 
 [_LOWER] = LAYOUT(
   _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
    KC_GRV, KC_1   , KC_2   , KC_3   , KC_4,    KC_5   ,                         KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , _______,
   _______, KC_F1  , KC_F2  , KC_F3  , KC_F4,   KC_F5,                           KC_F6  , KC_4   , KC_5   , KC_6   , KC_DOT , KC_ASTR,
-  _______, KC_F7  , KC_F8  , KC_F9  , KC_F10,  KC_F11, _______,        KC_0,    KC_F12 , KC_1   , KC_2   , KC_3   , KC_SLSH, KC_PLUS,
-                    _______, _______, _______, KC_0  , _______,       _______, _______, _______, _______, _______
+  _______, KC_F7  , KC_F8  , KC_F9  , KC_F10,  KC_F11, _______,        KC_0,    KC_F12 , KC_1   , KC_2   , KC_3   , KC_0   , KC_PLUS,
+                    _______, _______, _______, KC_0,  _______,       _______, _______, _______, _______, _______
+),
+
+[_LOWERGAME] = LAYOUT(
+  _______, KC_6   , KC_7   , KC_8   , KC_9   , KC_0   ,                         _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______,   _______,                       _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______,  _______, _______,        _______,    _______, _______, _______, _______, _______, _______,
+                    _______, _______, _______, _______,  _______,       _______, _______, _______, _______, _______
 ),
 
 [_RAISE] = LAYOUT(
   _______, _______, _______,  _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
   _______, _______, KC_LCBR,  KC_RCBR, KC_EQL, _______,                          _______, KC_MINS, KC_LPRN, KC_RPRN, _______, KC_DEL,
   KC_DEL, KC_PAUSE, _______,  KC_PGUP, KC_HOME, KC_RBRC,                         KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, KC_PIPE, KC_GRV,
-  _______, KC_PSCR, KC_PAST,  KC_PGDN,  KC_END,  KC_EQL, _______,       _______, KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS, _______,
-                     KC_APP,  _______, _______, KC_INS,  _______,       _______, _______, _______, _______, _______
+  _______, KC_PSCR, KC_PAST,  KC_PGDN,  KC_END,  KC_EQL, KC_APP,       _______, KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS, _______,
+                     _______,  _______, _______, KC_INS, _______,       _______, _______, _______, _______, _______
 ),
 
 [_ADJUST] = LAYOUT(
   XXXXXXX, XXXXXXX,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     RGB_TOG, RGB_MOD, RGB_VAI, RGB_VAD, RGB_HUI, RGB_HUD,
-  KC_CAPS  , QWERTY,   XXXXXXX,XXXXXXX,TD(TD_HRESET),XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, GAME,XXXXXXX, XXXXXXX,    XXXXXXX,  XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX ,QWERTY,   XXXXXXX,XXXXXXX,TD(TD_HRESET),XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  KC_CAPS, GAME,XXXXXXX, XXXXXXX,    XXXXXXX,  XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_MPRV,  KC_MNXT, XXXXXXX,     KC_MPRV, KC_MNXT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
                    _______, _______, _______, KC_MPLY, _______,     KC_MPLY, _______, _______, _______, _______ \
   )
@@ -209,69 +272,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef OLED_ENABLE
 
-static void render_logo(void) {
-    static const char PROGMEM qmk_logo[] = {
-        0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,0x90,0x91,0x92,0x93,0x94,
-        0xa0,0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
-        0xc0,0xc1,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xcb,0xcc,0xcd,0xce,0xcf,0xd0,0xd1,0xd2,0xd3,0xd4,0
-    };
-
-    oled_write_P(qmk_logo, false);
-}
-
-static void print_status_narrow(void) {
-    // Print current mode
-    oled_write_P(PSTR("\n"), false);
-  oled_write_P(PSTR(""), false);
-    oled_write_P(PSTR("Lotus -58-"), false);
-  oled_write_P(PSTR("\n"), false);
-
-    switch (get_highest_layer(default_layer_state)) {
-        case _QWERTY:
-            oled_write_P(PSTR("Qwrty"), false);
-            break;
-        default:
-            oled_write_P(PSTR("Undef"), false);
-    }
-    oled_write_P(PSTR("\n"), false);
-    // Print current layer
-    oled_write_P(PSTR("Layer"), false);
-    switch (get_highest_layer(layer_state)) {
-        case _QWERTY:
-            oled_write_P(PSTR("-Base\n"), false);
-            break;
-        case _FUNC:
-            oled_write_P(PSTR("-Func\n"), false);
-            break;
-        case _NUM:
-            oled_write_P(PSTR("-Num \n"), false);
-            break;
-        case _SYSTEM:
-            oled_write_P(PSTR("-Sys \n"), false);
-            break;
-        default:
-            oled_write_P(PSTR("Undef"), false);
-    }
-    oled_write_P(PSTR("\n"), false);
-    led_t led_usb_state = host_keyboard_led_state();
-    oled_write_ln_P(PSTR("CPSLK"), led_usb_state.caps_lock);
-    oled_write_P(PSTR("\n"), false);
-}
-
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-    if (is_keyboard_master()) {
-        return OLED_ROTATION_270;
-    }
-    return rotation;
+    oled_scroll_set_speed(6);
+    // I only have an OLED on the left side
+    return OLED_ROTATION_270;
 }
 
 bool oled_task_user(void) {
-    if (is_keyboard_master()) {
-        print_status_narrow();
-    } else {
-        render_logo();
-    }
+    // 'lotus', 32x32px
+    static const char PROGMEM lotus_picture[] = {
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0xe0, 0x70,
+        0x70, 0xe0, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x80, 0xc0, 0xc0, 0xc0, 0xc0, 0xc8, 0xff, 0xe3, 0x03, 0x03, 0x06, 0xfe, 0xff, 0x07, 0x01, 0x00,
+        0x00, 0x01, 0x07, 0xff, 0xfe, 0x06, 0x03, 0x03, 0xe3, 0xff, 0xc8, 0xc0, 0xc0, 0xc0, 0xc0, 0x80,
+        0x80, 0xc3, 0xef, 0x7c, 0x78, 0x70, 0xe1, 0xc7, 0xcf, 0x9c, 0xb8, 0xf3, 0xff, 0xfc, 0xf0, 0xc0,
+        0xc0, 0xf0, 0xfc, 0xff, 0xf3, 0xb8, 0x9c, 0xcf, 0xc7, 0xe1, 0x70, 0x78, 0x7c, 0xef, 0xc3, 0x80,
+        0x01, 0x03, 0x03, 0x06, 0x06, 0x0c, 0x0c, 0x0c, 0x0c, 0x0d, 0x0d, 0x0d, 0x07, 0x07, 0x03, 0x03,
+        0x03, 0x03, 0x07, 0x07, 0x0d, 0x0d, 0x0d, 0x0c, 0x0c, 0x0c, 0x0c, 0x06, 0x06, 0x03, 0x03, 0x01
+    };
 
+    oled_write_raw_P(lotus_picture, sizeof(lotus_picture));
+    oled_set_cursor(0, 7);
+    oled_write_ln_P(PSTR("Lotus "), false);
+    oled_write_ln_P(PSTR(" -58- "), false);
+    oled_write_ln_P(PSTR(" Glow "), false);
+    oled_set_cursor(0, 14);
+    switch (biton32(default_layer_state)) {
+        case _QWERTY:
+            oled_write_ln_P(PSTR("NORM"), false);
+            break;
+        case _GAME:
+            oled_write_ln_P(PSTR("GAME"), false);
+            break;
+    }
     return false;
 }
 
@@ -282,6 +315,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case QWERTY:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_QWERTY);
+        oled_clear();
       }
       return false;
       break;
@@ -289,16 +323,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case GAME:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_GAME);
+        oled_clear();
       }
       return false;
       break;
 
-      case LOWER:
+    case LOWER:
         if (record->event.pressed) {
           layer_on(_LOWER);
           update_tri_layer(_LOWER, _RAISE, _ADJUST);
         } else {
           layer_off(_LOWER);
+          update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        }
+      return false;
+      break;
+
+    case LOWERGAME:
+        if (record->event.pressed) {
+          layer_on(_LOWER);
+          layer_on(_LOWERGAME);
+          update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        } else {
+          layer_off(_LOWER);
+          layer_off(_LOWERGAME);
           update_tri_layer(_LOWER, _RAISE, _ADJUST);
         }
       return false;
@@ -349,19 +397,19 @@ void rgb_matrix_indicators_kb(void) {
             rgb_matrix_set_color(25, RGB_BLUE); // LOWER
             break;
         case _RAISE:
-            rgb_matrix_set_color(55, RGB_BLUE); // RAISE
+            rgb_matrix_set_color(54, RGB_BLUE); // RAISE
             break;
         case _ADJUST:
             rgb_matrix_set_color(25, RGB_PURPLE); // LOWER
-            rgb_matrix_set_color(55, RGB_PURPLE); // RAISE
+            rgb_matrix_set_color(54, RGB_PURPLE); // RAISE
             switch (biton32(default_layer_state)) {
                 case _QWERTY:
-                    rgb_matrix_set_color(5, RGB_GREEN);
-                    rgb_matrix_set_color(6, 32, 32, 32);
+                    rgb_matrix_set_color(7, RGB_GREEN);
+                    rgb_matrix_set_color(16, 32, 32, 32);
                     break;
                 case _GAME:
-                    rgb_matrix_set_color(5, 32, 32, 32);
-                    rgb_matrix_set_color(6, RGB_RED);
+                    rgb_matrix_set_color(7, 32, 32, 32);
+                    rgb_matrix_set_color(16, RGB_RED);
                     break;
             }
             break;
@@ -385,7 +433,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     if (clockwise != last_encoder_clockwise && TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DIRECTION_CHANGE_DEBOUNCE) {
         return false;
     }
-    last_encoding_time = timer_read_fast();
+    last_encoding_time = now;
     last_encoder_clockwise = clockwise;
 
     if (clockwise) {
