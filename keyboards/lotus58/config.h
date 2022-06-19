@@ -27,9 +27,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PRODUCT      Lotus58 Glow
 
 // QMK DFU Config
+// Leave QMK DFU bootloader using the key under OLED/encoder on both halfs
 #define QMK_ESC_OUTPUT F6 // usually COL
 #define QMK_ESC_INPUT B4 // usually ROW
 #define QMK_LED B0
+
+/* Bootmagic Lite key configuration */
+/* Top left key on left half (where 'escape' or 'grave' would usually be)*/
+#define BOOTMAGIC_LITE_ROW 0
+#define BOOTMAGIC_LITE_COLUMN 0
+
+/* Top right key on right half (where 'backspace' or 'dash' would usually be)*/
+#define BOOTMAGIC_LITE_ROW_RIGHT 5
+#define BOOTMAGIC_LITE_COLUMN_RIGHT 0
 
 // Set USB polling rate to 1000 Hz
 #define USB_POLLING_INTERVAL_MS 1
@@ -113,22 +123,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #    define ENABLE_RGB_MATRIX_CYCLE_ALL
 // #    define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
 // #    define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
-#    define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
+// #    define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
 // #    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN
 // #    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
 // #    define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
 // #    define ENABLE_RGB_MATRIX_CYCLE_SPIRAL
 // #    define ENABLE_RGB_MATRIX_DUAL_BEACON
-#    define ENABLE_RGB_MATRIX_RAINBOW_BEACON
-#    define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
+// #    define ENABLE_RGB_MATRIX_RAINBOW_BEACON
+// #    define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
 // #    define ENABLE_RGB_MATRIX_RAINDROPS
 // #    define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
-#    define ENABLE_RGB_MATRIX_HUE_BREATHING
-#    define ENABLE_RGB_MATRIX_HUE_PENDULUM
+// #    define ENABLE_RGB_MATRIX_HUE_BREATHING
+// #    define ENABLE_RGB_MATRIX_HUE_PENDULUM
 // #    define ENABLE_RGB_MATRIX_HUE_WAVE
 // #    define ENABLE_RGB_MATRIX_PIXEL_RAIN
-#    define ENABLE_RGB_MATRIX_PIXEL_FLOW
-#    define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
+// #    define ENABLE_RGB_MATRIX_PIXEL_FLOW
+// #    define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
 // enabled only if RGB_MATRIX_FRAMEBUFFER_EFFECTS is defined
 #    define ENABLE_RGB_MATRIX_TYPING_HEATMAP
 // #    define ENABLE_RGB_MATRIX_DIGITAL_RAIN
@@ -136,25 +146,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
 #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE
 #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
+// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
 // #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS
 // #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS
 // #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS
 // #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS
-#    define ENABLE_RGB_MATRIX_SPLASH
-#    define ENABLE_RGB_MATRIX_MULTISPLASH
-#    define ENABLE_RGB_MATRIX_SOLID_SPLASH
-#    define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
+// #    define ENABLE_RGB_MATRIX_SPLASH
+// #    define ENABLE_RGB_MATRIX_MULTISPLASH
+// #    define ENABLE_RGB_MATRIX_SOLID_SPLASH
+// #    define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
 #endif
 
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
-
-/* If defined, GRAVE_ESC will always act as ESC when CTRL is held.
- * This is useful for the Windows task manager shortcut (ctrl+shift+esc).
- */
-//#define GRAVE_ESC_CTRL_OVERRIDE
 
 /*
  * Feature disable options
@@ -164,9 +169,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* disable action features */
 #define NO_ACTION_ONESHOT
 
-/* Bootmagic Lite key configuration */
-#define BOOTMAGIC_LITE_ROW 0
-#define BOOTMAGIC_LITE_COLUMN 0
+/* Squeezing AVR Guide suggests this */
+#undef LOCKING_SUPPORT_ENABLE
+#undef LOCKING_RESYNC_ENABLE
+
+/* Only works when you're using less than 8 layers! */
+/* #define LAYER_STATE_8BIT */
 
 /* DEBUG */
 #define DEBUG_MATRIX_SCAN_RATE

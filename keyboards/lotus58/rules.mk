@@ -2,7 +2,7 @@
 MCU = atmega32u4
 
 # Bootloader selection
-# BOOTLOADER = caterina // default for pro micro
+#BOOTLOADER = caterina # default for pro micro
 BOOTLOADER = qmk-dfu
 
 ## Options ##
@@ -18,7 +18,7 @@ LTO_ENABLE = yes
 SPLIT_KEYBOARD = yes
 
 ENCODER_ENABLE = yes
-OLED_ENABLE = no
+OLED_ENABLE = yes
 
 # RGBLIGHT_ENABLE = yes
 # RGBLIGHT_DRIVER = WS2812 # Actually SK6812 mini-E, but should be compatible...
@@ -26,8 +26,13 @@ OLED_ENABLE = no
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = WS2812 # Actually SK6812 mini-E, but should be compatible...
 
+# Space saving
+SPACE_CADET_ENABLE = no
+GRAVE_ESC_ENABLE = no
+MAGIC_ENABLE = no
+
 AUTO_SHIFT_ENABLE = no
-NKRO_ENABLE = yes
+NKRO_ENABLE = no # save space ?
 TAP_DANCE_ENABLE = yes
 
 # Debounce eagerly (report change immediately) to keep latency low
