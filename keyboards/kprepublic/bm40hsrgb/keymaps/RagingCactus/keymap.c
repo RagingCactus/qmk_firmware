@@ -190,7 +190,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * |  Tab |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   4  |   5  |   6  |   .  |  *   |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |   1  |   2  |   3  |   /  |Enter |
+ * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |   1  |   2  |   3  |   0  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |      0      |      |   -  |      | KP_+ |      |
  * `-----------------------------------------------------------------------------------'
@@ -198,7 +198,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT_planck_mit( \
    KC_GRV,   KC_1,     KC_2,    KC_3,    KC_4,    KC_5,    KC_6,     KC_7, KC_8,    KC_9,     KC_0,    _______, \
   _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,     KC_4, KC_5,    KC_6,     KC_DOT,  KC_ASTR, \
-  _______,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,   KC_F12,    KC_1, KC_2,    KC_3,     KC_SLSH, _______, \
+  _______,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,   KC_F12,    KC_1, KC_2,    KC_3,     KC_0   , _______, \
   _______, _______, _______, _______, _______,          KC_0,     _______, KC_MINS, _______,  _______, KC_PLUS  \
 ),
 
@@ -223,7 +223,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Adjust (Lower + Raise)
  * ,--------------------------------------------------------------------------------------.
- * | C-A-I|Qwerty|      |      |HRESET|      |      |      |         |      |      |C-A-D |
+ * | C-A-I|Qwerty|      |      |HRESET|      |      |RGB N |RGB P    |LED + | LED -|C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
  * | Caps |GAME  |      |Aud on|Audoff|      |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
@@ -233,7 +233,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_mit( \
-  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, TD(TD_HRESET), _______, _______, _______, _______, _______, _______, LALT(LCTL(KC_DEL)), \
+  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, TD(TD_HRESET), _______, _______, RGB_MOD, RGB_RMOD, RGB_VAI,RGB_VAD, LALT(LCTL(KC_DEL)), \
   KC_CAPS,            GAME,    _______, AU_ON,   AU_OFF,        _______, _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
   _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,        KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
   RGB_TOG,            _______, _______, _______, _______,            KC_MPLY,     _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
