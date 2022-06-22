@@ -264,9 +264,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_ADJUST] = LAYOUT(
   XXXXXXX, XXXXXXX,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     RGB_TOG, RGB_MOD, RGB_VAI, RGB_VAD, RGB_HUI, RGB_HUD,
   XXXXXXX ,QWERTY,   XXXXXXX,XXXXXXX,TD(TD_HRESET),XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  KC_CAPS, GAME,XXXXXXX, XXXXXXX,    XXXXXXX,  XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  KC_CAPS, GAME,XXXXXXX, XXXXXXX,    KC_MPLY,  KC_MPRV,                     KC_MNXT, KC_MPLY, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_MPRV,  KC_MNXT, XXXXXXX,     KC_MPRV, KC_MNXT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-                   _______, _______, _______, KC_MPLY, _______,     KC_MPLY, _______, _______, _______, _______ \
+                   _______, _______, _______, KC_MPLY, _______,            _______, KC_MPLY, _______, _______, _______ \
   )
 };
 
@@ -419,23 +419,7 @@ void rgb_matrix_indicators_kb(void) {
 }
 
 #ifdef ENCODER_ENABLE
-static fast_timer_t last_encoding_time = 0;
-static const fast_timer_t ENCODER_DEBOUNCE = 10;
-static const fast_timer_t ENCODER_DIRECTION_CHANGE_DEBOUNCE = 200;
-static bool last_encoder_clockwise = true;
-
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    // Adapted and changed from https://www.reddit.com/r/olkb/comments/tz4tek/encoder_debouncing_is_easy/
-    fast_timer_t now = timer_read_fast();
-    if (TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DEBOUNCE) {
-        return false;
-    }
-    if (clockwise != last_encoder_clockwise && TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DIRECTION_CHANGE_DEBOUNCE) {
-        return false;
-    }
-    last_encoding_time = now;
-    last_encoder_clockwise = clockwise;
-
     if (clockwise) {
         tap_code(KC_MS_WH_DOWN);
     } else {
