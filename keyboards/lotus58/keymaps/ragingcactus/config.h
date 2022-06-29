@@ -1,5 +1,7 @@
 #pragma once
 
+#define TAPPING_TERM_PER_KEY
+
 #define OLED_BRIGHTNESS 128
 #define OLED_SCROLL_TIMEOUT 30000
 
