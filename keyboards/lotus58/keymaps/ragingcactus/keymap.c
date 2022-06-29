@@ -198,10 +198,20 @@ void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
     [TD_GUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, gui_loweredgui_finished, gui_loweredgui_reset),
-    [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, hreset_finished, NULL, 2000), // Delayed reset so I stop pressing it by accident
+    [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, hreset_finished, NULL),
 };
 
 // Tap Dances END
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // Delayed reset so I stop pressing it by accident
+        case TD(TD_HRESET):
+            return 2000;
+        default:
+            return TAPPING_TERM;
+    }
+}
 
 /* Keymap for reference
  * The outermost key on the last row is the encoder press!
