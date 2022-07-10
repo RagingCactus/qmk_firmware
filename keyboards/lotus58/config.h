@@ -67,30 +67,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGB_MATRIX_ENABLE
 #    define RGB_MATRIX_SPLIT {29, 29}
+#    define RGBLED_NUM 58
 #    define DRIVER_LED_TOTAL 58
 #    define RGB_DISABLE_WHEN_USB_SUSPENDED // turn off effects when suspended
 #    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 128
 #endif
 
+# define OLED_BRIGHTNESS 0
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
-
-/*
- * Feature disable options
- *  These options are useful for firmware size reduction.
- */
-
-/* disable action features */
-#define NO_ACTION_ONESHOT
-
-/* Squeezing AVR Guide suggests this */
-#undef LOCKING_SUPPORT_ENABLE
-#undef LOCKING_RESYNC_ENABLE
-
-/* Only works when you're using less than 8 layers!
- * It does save some bytes though! */
-#define LAYER_STATE_8BIT
 
 /* DEBUG, only useable with console and when you disable other features */
 #define DEBUG_MATRIX_SCAN_RATE

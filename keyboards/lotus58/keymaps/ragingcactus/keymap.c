@@ -325,7 +325,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case QWERTY:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_QWERTY);
-        oled_clear();
+
+        #ifdef OLED_ENABLE
+            oled_clear();
+        #endif
       }
       return false;
       break;
@@ -333,7 +336,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case GAME:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_GAME);
-        oled_clear();
+
+        #ifdef OLED_ENABLE
+            oled_clear();
+        #endif
       }
       return false;
       break;

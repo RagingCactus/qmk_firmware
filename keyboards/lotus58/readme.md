@@ -15,7 +15,8 @@ See the [ISP flashing guide](https://docs.qmk.fm/#/isp_flashing_guide?id=isp-fla
 
 You can also change the bootloader to `caterina` and fix any errors that pop up to use the default bootloader instead..
 
-You can also change the bootloader to `caterina` and fix any errors that pop up to use the default bootloader instead.
+Feel free to also try the RP2040 variant if you have a Pro Micro compatible RP2040 board such as the Adafruit KB2040!
+For me it already works great and it has MUCH more space!
 
 * Keyboard Maintainer: [TweetyDaBird](https://github.com/TweetyDaBird)
 * Hardware Supported:
