@@ -18,7 +18,7 @@
 
 #ifdef RGB_MATRIX_ENABLE
 
-#define LED_MATRIX_CENTER {110, 30}
+#define LED_MATRIX_CENTER {110, 21}
 
 led_config_t g_led_config = {
     {
@@ -39,19 +39,20 @@ led_config_t g_led_config = {
         // The default expected range of values for `{ x, y }` is the inclusive range `{ 0..224, 0..64 }`
         // 224 / (14 real cols + 6 cols as buffer) ~= 11 per col
         // 64 / (5 real rows + 1 row as buffer) ~= 10 per row
-        // Remember to set #define LED_MATRIX_CENTER { xxx, yyy } properly above!!!
+
+        // Left half
         { 55,  2}, { 44,  1}, { 33,  0}, { 22,  1}, { 11,  3}, {  0,  4},
         {  0, 14}, { 11, 13}, { 22, 11}, { 33, 10}, { 44, 11}, { 55, 12},
         { 55, 22}, { 44, 21}, { 33, 20}, { 22, 21}, { 11, 23}, {  0, 24},
         {  0, 34}, { 11, 33}, { 22, 31}, { 33, 30}, { 44, 31}, { 55, 32},
-        { 70, 27}, { 66, 40}, { 50, 42}, { 39, 41} ,{ 28, 40},  // bottom row, right to left, far outer right key is first
+        { 70, 27}, { 66, 40}, { 50, 42}, { 39, 41} ,{ 28, 40}, // bottom row, right to left, far outer right key is first
 
-        // TODO: right half!
-        {122, 42}, {142, 42}, {162, 42}, {183, 42}, {203, 42}, {224, 42},
-        {  0, 64}, { 20, 64}, { 40, 64}, { 61, 64}, { 81, 64}, {111, 64},
-        {131, 64}, {142, 64}, {162, 64}, {183, 64}, {203, 64}, {224, 64},
-        {244, 64}, {255, 64}, { 50, 86}, { 70, 86}, { 90, 86}, {110, 86},
-                   {120, 86}, {140, 86}, {160, 86}, {180, 86}, {180, 86}
+        // Right half
+        {220,  4}, {209,  3}, {198,  1}, {187,  0}, {176,  1}, {165,  2},
+        {165, 12}, {176, 11}, {187, 10}, {198, 11}, {209, 13}, {220, 14},
+        {220, 24}, {209, 23}, {198, 21}, {187, 20}, {176, 21}, {165, 22},
+        {165, 32}, {176, 31}, {187, 30}, {198, 31}, {209, 33}, {220, 34},
+                   {150, 27}, {154, 40}, {170, 42}, {181, 41}, {192, 40} // bottom row, left to right, far outer left key is first
     }, {
         // LED Index to Flag
         4, 4, 4, 4, 4, 4,
