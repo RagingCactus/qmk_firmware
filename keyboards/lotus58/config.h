@@ -26,12 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MANUFACTURER TweetyDaBird
 #define PRODUCT      Lotus58 Glow
 
-// QMK DFU Config
-// Leave QMK DFU bootloader using the key under OLED/encoder on both halfs
-#define QMK_ESC_OUTPUT F6 // usually COL
-#define QMK_ESC_INPUT B4 // usually ROW
-#define QMK_LED B0
-
 /* Bootmagic Lite key configuration */
 /* Top left key on left half (where 'escape' or 'grave' would usually be)*/
 #define BOOTMAGIC_LITE_ROW 0
@@ -48,8 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_ROWS 10
 #define MATRIX_COLS 6
 
-#define MATRIX_ROW_PINS { D4, C6, D7, E6, B4 }
-#define MATRIX_COL_PINS { B1, B2, B3, B6, F7, F6 }
 #define DIODE_DIRECTION COL2ROW
 
 // Encoder support
@@ -57,16 +49,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ENCODERS_PAD_B { }
 #define ENCODER_RESOLUTIONS { }
 
-#define ENCODERS_PAD_A_RIGHT { F4 }
-#define ENCODERS_PAD_B_RIGHT { F5 }
 #define ENCODER_RESOLUTIONS_RIGHT { 4 }
-
-// Define detection pin handedness
-#define SPLIT_HAND_PIN B5
 
 // Define Communication
 #define USE_SERIAL
-#define SOFT_SERIAL_PIN D2
 
 // Allows dual displays to show modifiers etc
 #define SERIAL_USE_MULTI_TRANSACTION
@@ -78,9 +64,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_USB_DETECT
 #define SPLIT_USB_TIMEOUT 2000
 #define SPLIT_USB_TIMEOUT_POLL 10
-
-// Basic RGB configuration
-#define RGB_DI_PIN D3
 
 #ifdef RGB_MATRIX_ENABLE
 #    define RGB_MATRIX_SPLIT {29, 29}
