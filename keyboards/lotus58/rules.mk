@@ -1,10 +1,3 @@
-# MCU name
-MCU = atmega32u4
-
-# Bootloader selection
-#BOOTLOADER = caterina # default for pro micro
-BOOTLOADER = qmk-dfu # Requires you to reflash the bootloader using an ISP programmer (another arduino can serve that purpose)
-
 ## Options ##
 BOOTMAGIC_ENABLE = yes     # Virtual DIP switch configuration
 EXTRAKEY_ENABLE = yes       # Audio control and System control
@@ -41,3 +34,5 @@ DEBOUNCE_TYPE = sym_eager_pk
 
 # DEBUG
 # CONSOLE_ENABLE = yes
+
+DEFAULT_FOLDER = lotus58/promicro
