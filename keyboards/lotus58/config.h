@@ -1,5 +1,5 @@
 /*
-Copyright 2021 TweetyDaBird
+Copyright 2021-2022 TweetyDaBird, Marius Renner
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -68,9 +68,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define USE_SERIAL
 #define SOFT_SERIAL_PIN D2
 
-// Define which side is the master (should be connected to USB)
-//#define MASTER_RIGHT
-
 // Allows dual displays to show modifiers etc
 #define SERIAL_USE_MULTI_TRANSACTION
 #define SPLIT_MODS_ENABLE
@@ -82,79 +79,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_USB_TIMEOUT 2000
 #define SPLIT_USB_TIMEOUT_POLL 10
 
-// Used for tapping in keymap
-#define TAPPING_TERM 175
-#define TAPPING_TOGGLE 2
-#define TAP_CODE_DELAY 10
-
 // Basic RGB configuration
 #define RGB_DI_PIN D3
-// #define RGBLIGHT_SPLIT
-
-// Just backlight, no underglow?
-// #define RGBLED_SPLIT { 29, 29 }
-// #define RGBLED_NUM 58
-//#define RGBLIGHT_SPLIT
-//#define RGBLIGHT_ANIMATIONS
-//#define RGBLIGHT_LIMIT_VAL 140
-
-
 
 #ifdef RGB_MATRIX_ENABLE
 #    define RGB_MATRIX_SPLIT {29, 29}
 #    define DRIVER_LED_TOTAL 58
 #    define RGB_DISABLE_WHEN_USB_SUSPENDED // turn off effects when suspended
-#    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 140
-#    define RGB_MATRIX_KEYPRESSES
-#    define RGB_MATRIX_FRAMEBUFFER_EFFECTS
-// RGB Matrix Animation modes. Explicitly enabled
-// For full list of effects, see:
-// https://docs.qmk.fm/#/feature_rgb_matrix?id=rgb-matrix-effects
-// #    define ENABLE_RGB_MATRIX_ALPHAS_MODS
-// #    define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
-// #    define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
-// #    define ENABLE_RGB_MATRIX_BREATHING
-// #    define ENABLE_RGB_MATRIX_BAND_SAT
-// #    define ENABLE_RGB_MATRIX_BAND_VAL
-// #    define ENABLE_RGB_MATRIX_BAND_PINWHEEL_SAT
-// #    define ENABLE_RGB_MATRIX_BAND_PINWHEEL_VAL
-// #    define ENABLE_RGB_MATRIX_BAND_SPIRAL_SAT
-// #    define ENABLE_RGB_MATRIX_BAND_SPIRAL_VAL
-// #    define ENABLE_RGB_MATRIX_CYCLE_ALL
-// #    define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
-// #    define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
-// #    define ENABLE_RGB_MATRIX_RAINBOW_MOVING_CHEVRON
-// #    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN
-// #    define ENABLE_RGB_MATRIX_CYCLE_OUT_IN_DUAL
-// #    define ENABLE_RGB_MATRIX_CYCLE_PINWHEEL
-// #    define ENABLE_RGB_MATRIX_CYCLE_SPIRAL
-// #    define ENABLE_RGB_MATRIX_DUAL_BEACON
-// #    define ENABLE_RGB_MATRIX_RAINBOW_BEACON
-// #    define ENABLE_RGB_MATRIX_RAINBOW_PINWHEELS
-// #    define ENABLE_RGB_MATRIX_RAINDROPS
-// #    define ENABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
-// #    define ENABLE_RGB_MATRIX_HUE_BREATHING
-// #    define ENABLE_RGB_MATRIX_HUE_PENDULUM
-// #    define ENABLE_RGB_MATRIX_HUE_WAVE
-// #    define ENABLE_RGB_MATRIX_PIXEL_RAIN
-// #    define ENABLE_RGB_MATRIX_PIXEL_FLOW
-// #    define ENABLE_RGB_MATRIX_PIXEL_FRACTAL
-// enabled only if RGB_MATRIX_FRAMEBUFFER_EFFECTS is defined
-#    define ENABLE_RGB_MATRIX_TYPING_HEATMAP
-// #    define ENABLE_RGB_MATRIX_DIGITAL_RAIN
-// enabled only of RGB_MATRIX_KEYPRESSES or RGB_MATRIX_KEYRELEASES is defined
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_SIMPLE
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE
-#    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
-// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTIWIDE
-// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_CROSS
-// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTICROSS
-// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_NEXUS
-// #    define ENABLE_RGB_MATRIX_SOLID_REACTIVE_MULTINEXUS
-// #    define ENABLE_RGB_MATRIX_SPLASH
-// #    define ENABLE_RGB_MATRIX_MULTISPLASH
-// #    define ENABLE_RGB_MATRIX_SOLID_SPLASH
-// #    define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
+#    define RGB_MATRIX_MAXIMUM_BRIGHTNESS 128
 #endif
 
 
@@ -163,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
  * Feature disable options
- *  These options are also useful to firmware size reduction.
+ *  These options are useful for firmware size reduction.
  */
 
 /* disable action features */
@@ -173,8 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #undef LOCKING_SUPPORT_ENABLE
 #undef LOCKING_RESYNC_ENABLE
 
-/* Only works when you're using less than 8 layers! */
-/* #define LAYER_STATE_8BIT */
+/* Only works when you're using less than 8 layers!
+ * It does save some bytes though! */
+#define LAYER_STATE_8BIT
 
-/* DEBUG */
+/* DEBUG, only useable with console and when you disable other features */
 #define DEBUG_MATRIX_SCAN_RATE

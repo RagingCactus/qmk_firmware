@@ -32,7 +32,7 @@ GRAVE_ESC_ENABLE = no
 MAGIC_ENABLE = no
 
 AUTO_SHIFT_ENABLE = no
-NKRO_ENABLE = no # save space ?
+NKRO_ENABLE = no # save space and be as compatible as possible
 TAP_DANCE_ENABLE = yes
 
 # Debounce eagerly (report change immediately) to keep latency low

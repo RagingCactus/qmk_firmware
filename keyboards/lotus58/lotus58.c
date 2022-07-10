@@ -1,4 +1,4 @@
-/* Copyright 2021 TweetyDaBird
+/* Copyright 2021-2022 TweetyDaBird, Marius Renner
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,11 +48,11 @@ led_config_t g_led_config = {
         { 70, 27}, { 66, 40}, { 50, 42}, { 39, 41} ,{ 28, 40}, // bottom row, right to left, far outer right key is first
 
         // Right half
-        {220,  4}, {209,  3}, {198,  1}, {187,  0}, {176,  1}, {165,  2},
-        {165, 12}, {176, 11}, {187, 10}, {198, 11}, {209, 13}, {220, 14},
-        {220, 24}, {209, 23}, {198, 21}, {187, 20}, {176, 21}, {165, 22},
-        {165, 32}, {176, 31}, {187, 30}, {198, 31}, {209, 33}, {220, 34},
-                   {150, 27}, {154, 40}, {170, 42}, {181, 41}, {192, 40} // bottom row, left to right, far outer left key is first
+        {165, 2}, {176, 1}, {187, 0}, {198, 1}, {209, 3}, {220, 4},
+        {220, 14}, {209, 13}, {198, 11}, {187, 10}, {176, 11}, {165, 12},
+        {165, 22}, {176, 21}, {187, 20}, {198, 21}, {209, 23}, {220, 24},
+        {220, 34}, {209, 33}, {198, 31}, {187, 30}, {176, 31}, {165, 32},
+        {150, 27}, {154, 40}, {170, 42}, {181, 41}, {192, 40}, // bottom row, left to right, far outer left key is first
     }, {
         // LED Index to Flag
         4, 4, 4, 4, 4, 4,
