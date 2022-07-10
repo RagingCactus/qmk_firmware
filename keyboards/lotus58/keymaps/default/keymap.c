@@ -190,23 +190,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 #ifdef ENCODER_ENABLE
-static fast_timer_t last_encoding_time = 0;
-static const fast_timer_t ENCODER_DEBOUNCE = 10;
-static const fast_timer_t ENCODER_DIRECTION_CHANGE_DEBOUNCE = 200;
-static bool last_encoder_clockwise = true;
-
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    // Adapted and changed from https://www.reddit.com/r/olkb/comments/tz4tek/encoder_debouncing_is_easy/
-    fast_timer_t now = timer_read_fast();
-    if (TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DEBOUNCE) {
-        return false;
-    }
-    if (clockwise != last_encoder_clockwise && TIMER_DIFF_FAST(now, last_encoding_time) < ENCODER_DIRECTION_CHANGE_DEBOUNCE) {
-        return false;
-    }
-    last_encoding_time = timer_read_fast();
-    last_encoder_clockwise = clockwise;
-
     if (clockwise) {
         tap_code(KC_MS_WH_DOWN);
     } else {
