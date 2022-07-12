@@ -79,4 +79,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE 5
 
 /* DEBUG, only useable with console and when you disable other features */
-#define DEBUG_MATRIX_SCAN_RATE
+/* #define DEBUG_MATRIX_SCAN_RATE */
