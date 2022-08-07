@@ -408,16 +408,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void rgb_matrix_indicators_kb(void) {
+    uint8_t val = rgb_matrix_get_val();
+
+    HSV blue_scaled_hsv = { HSV_BLUE };
+    blue_scaled_hsv.v = val;
+    RGB blue_scaled_rgb;
+
+    HSV purple_scaled_hsv = { HSV_PURPLE };
+    purple_scaled_hsv.v = val;
+    RGB purple_scaled_rgb;
+
     switch(get_highest_layer(layer_state | default_layer_state)) {
         case _LOWER:
-            rgb_matrix_set_color(25, RGB_BLUE); // LOWER
+            blue_scaled_rgb = hsv_to_rgb(blue_scaled_hsv);
+            rgb_matrix_set_color(25, blue_scaled_rgb.r, blue_scaled_rgb.g, blue_scaled_rgb.b); // LOWER
             break;
         case _RAISE:
-            rgb_matrix_set_color(54, RGB_BLUE); // RAISE
+            blue_scaled_rgb = hsv_to_rgb(blue_scaled_hsv);
+            rgb_matrix_set_color(54, blue_scaled_rgb.r, blue_scaled_rgb.g, blue_scaled_rgb.b); // RAISE
             break;
         case _ADJUST:
-            rgb_matrix_set_color(25, RGB_PURPLE); // LOWER
-            rgb_matrix_set_color(54, RGB_PURPLE); // RAISE
+            purple_scaled_rgb = hsv_to_rgb(purple_scaled_hsv);
+            rgb_matrix_set_color(25, purple_scaled_rgb.r, purple_scaled_rgb.g, purple_scaled_rgb.b); // LOWER
+            rgb_matrix_set_color(54, purple_scaled_rgb.r, purple_scaled_rgb.g, purple_scaled_rgb.b); // RAISE
             switch (biton32(default_layer_state)) {
                 case _QWERTY:
                     rgb_matrix_set_color(7, RGB_GREEN);
