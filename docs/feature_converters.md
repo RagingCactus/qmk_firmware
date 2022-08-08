@@ -13,6 +13,7 @@ Currently the following converters are available:
 | `promicro` | `proton_c`        |
 | `promicro` | `kb2040`          |
 | `promicro` | `promicro_rp2040` |
+| `promicro` | `blok`            |
 
 See below for more in depth information on each converter.
 
@@ -29,7 +30,7 @@ qmk flash -c -kb keebio/bdn9/rev1 -km default -e CONVERT_TO=proton_c
 
 You can also add the same `CONVERT_TO=<target>` to your keymap's `rules.mk`, which will accomplish the same thing.
 
-?> If you get errors about `PORTB/DDRB`, etc not being defined, so you'll need to convert the keyboard's code to use the [GPIO Controls](gpio_control.md) that will work for both ARM and AVR. This shouldn't affect the AVR builds at all.
+?> If you get errors about `PORTB/DDRB`, etc not being defined, you'll need to convert the keyboard's code to use the [GPIO Controls](gpio_control.md) that will work for both ARM and AVR. This shouldn't affect the AVR builds at all.
 
 ### Conditional Configuration
 
@@ -52,6 +53,7 @@ If a board currently supported in QMK uses a [Pro Micro](https://www.sparkfun.co
 | [Proton C](https://qmk.fm/proton-c/)                                   | `proton_c`        |
 | [Adafruit KB2040](https://learn.adafruit.com/adafruit-kb2040)          | `kb2040`          |
 | [SparkFun Pro Micro - RP2040](https://www.sparkfun.com/products/18288) | `promicro_rp2040` |
+| [Blok](https://boardsource.xyz/store/628b95b494dfa308a6581622)         | `blok`            |
 
 Converter summary:
 
@@ -60,10 +62,11 @@ Converter summary:
 | `proton_c`        | `-e CONVERT_TO=proton_c`        | `CONVERT_TO=proton_c`        | `#ifdef CONVERT_TO_PROTON_C`        |
 | `kb2040`          | `-e CONVERT_TO=kb2040`          | `CONVERT_TO=kb2040`          | `#ifdef CONVERT_TO_KB2040`          |
 | `promicro_rp2040` | `-e CONVERT_TO=promicro_rp2040` | `CONVERT_TO=promicro_rp2040` | `#ifdef CONVERT_TO_PROMICRO_RP2040` |
+| `blok`            | `-e CONVERT_TO=blok`            | `CONVERT_TO=blok`            | `#ifdef CONVERT_TO_BLOK`            |
 
 ### Proton C :id=proton_c
 
-The Proton C only has one on-board LED (C13), and by default, the TXLED (D5) is mapped to it. If you want the RXLED (B0) mapped to it instead, add this like to your `config.h`:
+The Proton C only has one on-board LED (C13), and by default, the TXLED (D5) is mapped to it. If you want the RXLED (B0) mapped to it instead, add this line to your `config.h`:
 
 ```c
 #define CONVERT_TO_PROTON_C_RXLED
@@ -90,6 +93,6 @@ The following defaults are based on what has been implemented for [RP2040](platf
 | USB Host (e.g. USB-USB converter)            | Not supported (USB host code is AVR specific and is not currently supported on ARM)                              |
 | [Split keyboards](feature_split_keyboard.md) | Partial via `PIO` vendor driver - heavily dependent on enabled features                                          |
 
-### SparkFun Pro Micro - RP2040 :id=promicro_rp2040
+### SparkFun Pro Micro - RP2040 and Blok :id=promicro_rp2040 
 
 Currently identical to  [Adafruit KB2040](#kb2040).
