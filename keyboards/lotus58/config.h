@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Detects USB and assigns master (Not recommended on Elite C/Pro Micro mix)
 #define SPLIT_USB_DETECT
-#define SPLIT_USB_TIMEOUT 5000
+#define SPLIT_USB_TIMEOUT 2000
 #define SPLIT_USB_TIMEOUT_POLL 10
 
 #ifdef RGB_MATRIX_ENABLE
