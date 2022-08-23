@@ -28,6 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SOFT_SERIAL_PIN GP1
 
+// #define USB_VBUS_PIN GP12
+// OR
+// Detects USB and assigns master (Not recommended on Elite C/Pro Micro mix)
+#define SPLIT_USB_DETECT
+#define SPLIT_USB_TIMEOUT 2000
+#define SPLIT_USB_TIMEOUT_POLL 10
+
 #define RGB_DI_PIN GP0
 
 // Other special settings for RP2040

@@ -16,6 +16,11 @@
 
 #define SPLIT_HAND_PIN B5
 
+// Detects USB and assigns master (Not recommended on Elite C/Pro Micro mix)
+// #define SPLIT_USB_DETECT
+// #define SPLIT_USB_TIMEOUT 2000
+// #define SPLIT_USB_TIMEOUT_POLL 10
+
 #define SOFT_SERIAL_PIN D2
 
 #define RGB_DI_PIN D3
