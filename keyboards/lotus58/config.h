@@ -70,8 +70,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # define OLED_BRIGHTNESS 0
 
-/* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
-#define DEBOUNCE 5
+/* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed
+   In my testing with Gateron Box Ink v2 switches I need this to be at least 8ms
+   to reliably prevent chatter. However, this should be fine as it will only affect
+   the second state change as the algorithm sym_eager_pk is used. That means it will
+   immediately report the first state change it sees, but will suppress a second state
+   change for 10ms. I have never seen the keys bounce while not changing state, so
+   this should yield very nice behavior.
+ */
+#define DEBOUNCE 10
 
 /* DEBUG, only useable with console and when you disable other features */
 /* #define DEBUG_MATRIX_SCAN_RATE */
