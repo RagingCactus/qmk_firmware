@@ -18,6 +18,10 @@ You can also change the bootloader to `caterina` and fix any errors that pop up 
 Feel free to also try the RP2040 variant if you have a Pro Micro compatible RP2040 board such as the Adafruit KB2040!
 For me it already works great and it has MUCH more space!
 
+I use a custom, tiny little PCB to provide VBUS sensing functionality to the KB2040.
+If you want to use the KB2040 version and you did not build a similar circuit (and used the JST connector at the back of the KB2040 to attach it), you have to check `kb2040/config.h` and remove the `USB_VBUS_PIN` definition and instead use the block that begins with `SPLIT_USB_DETECT`.
+If that isn't clear enough, feel free to just ask me directly!
+
 * Keyboard Maintainer: [TweetyDaBird](https://github.com/TweetyDaBird)
 * Hardware Supported:
   * Tested with Lotus58 Glow PCB v1.23
