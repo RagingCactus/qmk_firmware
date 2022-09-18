@@ -16,7 +16,7 @@ extern keymap_config_t keymap_config;
 #define _GAME 1
 #define _LOWER 2
 #define _RAISE 3
-#define _ADJUST 16
+#define _ADJUST 7
 
 // Simple custom keycodes
 enum custom_keycodes {
@@ -136,13 +136,24 @@ void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
-    [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, hreset_finished, NULL, 2000), // Delayed reset so I stop pressing it by accident
+    [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, hreset_finished, NULL),
 };
 
 // Tap Dances END
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // Delayed reset so I stop pressing it by accident
+        case TD(TD_HRESET):
+            return 2000;
+        default:
+            return TAPPING_TERM;
+    }
+}
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
