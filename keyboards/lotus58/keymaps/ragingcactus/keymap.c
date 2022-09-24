@@ -302,11 +302,19 @@ bool oled_task_user(void) {
     };
 
     oled_write_raw_P(lotus_picture, sizeof(lotus_picture));
-    oled_set_cursor(0, 7);
-    oled_write_ln_P(PSTR("Lotus "), false);
-    oled_write_ln_P(PSTR(" -58- "), false);
-    oled_write_ln_P(PSTR(" Glow "), false);
-    oled_set_cursor(0, 14);
+    #ifdef __AVR__
+        oled_set_cursor(0, 7);
+        oled_write_ln_P(PSTR("Lotus "), false);
+        oled_write_ln_P(PSTR(" -58- "), false);
+        oled_write_ln_P(PSTR(" Glow "), false);
+        oled_set_cursor(0, 14);
+    #else
+        oled_set_cursor(0, 5);
+        oled_write_ln_P(PSTR("Lotus\n"), false);
+        oled_write_ln_P(PSTR(" -58- \n"), false);
+        oled_write_ln_P(PSTR("Glow "), false);
+        oled_set_cursor(0, 13);
+    #endif
     switch (biton32(default_layer_state)) {
         case _QWERTY:
             oled_write_ln_P(PSTR("NORM"), false);
