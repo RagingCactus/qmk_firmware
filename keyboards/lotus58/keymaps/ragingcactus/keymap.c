@@ -17,19 +17,21 @@
 #include "eeconfig.h"
 
 #define _QWERTY 0
-#define _GAME 1
-#define _LOWER 2
-#define _RAISE 3
-#define _LOWERGAME 4
+#define _NUMQWERTY 1
+#define _GAME 2
+#define _LOWER 4
+#define _LOWERNUM 5
+#define _RAISE 6
 #define _ADJUST 7
 
 // Simple custom keycodes
 enum custom_keycodes {
   QWERTY = SAFE_RANGE,
+  NUMQWERTY,
   GAME,
   LOWER,
   RAISE,
-  LOWERGAME,
+  LOWERNUM,
   BACKLIT,
   EXT_PLV,
   LOWERED_GUI // GUI + LOWER, especially useful for GUI+Number shortcuts
@@ -240,12 +242,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                 XXXXXXX, TD(TD_ALT_LOWEREDALT), KC_LSFT, KC_SPC, LOWER,       RAISE,  KC_RSFT, RALT_T(KC_ENT),   TDLGUI,  XXXXXXX
 ),
 
+[_NUMQWERTY] = LAYOUT(
+   KC_GRV,  KC_1,    KC_2,      KC_3, KC_4,    KC_5,                             KC_6,    KC_7,      KC_8,    KC_9,   KC_0,    KC_MINS,
+  _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______,   _______,                       _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______,  _______, _______,        _______,    _______, _______, _______, _______, _______, _______,
+                    _______, _______, _______, _______,  LOWERNUM,       _______, _______, _______, _______, _______
+),
+
 [_GAME] = LAYOUT(
    KC_GRV,  KC_1,    KC_2,      KC_3,              KC_4,    KC_5,                             KC_6,    KC_7,      KC_8,    KC_9,   KC_0,    KC_MINS,
    KC_ESC,  KC_Q,    KC_W,      KC_E,              KC_R,    KC_T,                             KC_Y,    KC_U,      KC_I,    KC_O,     KC_P,     KC_BSPC,
    KC_TAB,  KC_A,    KC_S,      KC_D,              KC_F,    KC_G,                             KC_H,    KC_J,      KC_K,    KC_L,     KC_SCLN,  KC_QUOT,
    KC_LCTL, KC_Z,    KC_X,      KC_C,              KC_V,    KC_B, KC_LGUI,          KC_RGUI,  KC_N,    KC_M,      KC_COMM, KC_DOT,   KC_SLSH,  KC_RCTL,
-                XXXXXXX, KC_LALT, KC_LSFT, KC_SPC, LOWERGAME,                       RAISE   , KC_RSFT, KC_ENT,   KC_RGUI,   XXXXXXX
+                XXXXXXX, KC_LALT, KC_LSFT, KC_SPC, LOWERNUM,                       RAISE   , KC_RSFT, KC_ENT,   KC_RGUI,   XXXXXXX
 ),
 
 [_LOWER] = LAYOUT(
@@ -256,7 +266,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                     _______, _______, _______, KC_0,  _______,       _______, _______, _______, _______, _______
 ),
 
-[_LOWERGAME] = LAYOUT(
+[_LOWERNUM] = LAYOUT(
   _______, KC_6   , KC_7   , KC_8   , KC_9   , KC_0   ,                         _______, _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______,                         _______, _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______,   _______,                       _______, _______, _______, _______, _______, _______,
@@ -273,7 +283,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 [_ADJUST] = LAYOUT(
-  XXXXXXX, XXXXXXX,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     RGB_TOG, RGB_MOD, RGB_VAI, RGB_VAD, RGB_HUI, RGB_HUD,
+  XXXXXXX, NUMQWERTY,  XXXXXXX ,  XXXXXXX , XXXXXXX, XXXXXXX,                     RGB_TOG, RGB_MOD, RGB_VAI, RGB_VAD, RGB_HUI, RGB_HUD,
   XXXXXXX ,QWERTY,   XXXXXXX, XXXXXXX,TD(TD_HRESET),XXXXXXX,                     XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   KC_CAPS, GAME,     XXXXXXX, XXXXXXX,    KC_MPLY,  KC_MPRV,                 KC_MNXT, KC_MPLY, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    KC_MPRV,  KC_MNXT, KC_APP,     KC_APP, KC_MPRV, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -320,6 +330,9 @@ bool oled_task_user(void) {
         case _QWERTY:
             oled_write_ln_P(PSTR("NORM"), false);
             break;
+        case _NUMQWERTY:
+            oled_write_ln_P(PSTR("NUM"), false);
+            break;
         case _GAME:
             oled_write_ln_P(PSTR("GAME"), false);
             break;
@@ -334,6 +347,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case QWERTY:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_QWERTY);
+
+        #ifdef OLED_ENABLE
+            oled_clear();
+        #endif
+      }
+      return false;
+      break;
+
+    case NUMQWERTY:
+      if (record->event.pressed) {
+        set_single_persistent_default_layer(_NUMQWERTY);
 
         #ifdef OLED_ENABLE
             oled_clear();
@@ -364,14 +388,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
       break;
 
-    case LOWERGAME:
+    case LOWERNUM:
         if (record->event.pressed) {
           layer_on(_LOWER);
-          layer_on(_LOWERGAME);
+          layer_on(_LOWERNUM);
           update_tri_layer(_LOWER, _RAISE, _ADJUST);
         } else {
           layer_off(_LOWER);
-          layer_off(_LOWERGAME);
+          layer_off(_LOWERNUM);
           update_tri_layer(_LOWER, _RAISE, _ADJUST);
         }
       return false;
@@ -442,10 +466,17 @@ void rgb_matrix_indicators_kb(void) {
             rgb_matrix_set_color(54, purple_scaled_rgb.r, purple_scaled_rgb.g, purple_scaled_rgb.b); // RAISE
             switch (biton32(default_layer_state)) {
                 case _QWERTY:
+                    rgb_matrix_set_color(4, 32, 32, 32);
                     rgb_matrix_set_color(7, RGB_GREEN);
                     rgb_matrix_set_color(16, 32, 32, 32);
                     break;
+                case _NUMQWERTY:
+                    rgb_matrix_set_color(4, RGB_YELLOW);
+                    rgb_matrix_set_color(7, 32, 32, 32);
+                    rgb_matrix_set_color(16, 32, 32, 32);
+                    break;
                 case _GAME:
+                    rgb_matrix_set_color(4, 32, 32, 32);
                     rgb_matrix_set_color(7, 32, 32, 32);
                     rgb_matrix_set_color(16, RGB_RED);
                     break;
