@@ -2,7 +2,11 @@
 
 #define TAPPING_TERM 200
 #define TAPPING_TERM_PER_KEY
+
+// This should yield better behavior for my Mod-Tap RightAlt/Enter key
+// See https://github.com/qmk/qmk_firmware/blob/590c889537949f2926e9a6428e8b91deec94076c/docs/tap_hold.md#ignore-mod-tap-interrupt
 #define PERMISSIVE_HOLD
+#define IGNORE_MOD_TAP_INTERRUPT
 
 #define OLED_SCROLL_TIMEOUT 30000
 
