@@ -453,6 +453,7 @@ void rgb_matrix_indicators_kb(void) {
 
     switch(get_highest_layer(layer_state | default_layer_state)) {
         case _LOWER:
+        case _LOWERNUM:
             blue_scaled_rgb = hsv_to_rgb(blue_scaled_hsv);
             rgb_matrix_set_color(25, blue_scaled_rgb.r, blue_scaled_rgb.g, blue_scaled_rgb.b); // LOWER
             break;
