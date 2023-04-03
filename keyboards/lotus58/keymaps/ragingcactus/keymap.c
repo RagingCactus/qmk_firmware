@@ -497,10 +497,24 @@ void rgb_matrix_indicators_kb(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (clockwise) {
-        tap_code(KC_MS_WH_DOWN);
-    } else {
-        tap_code(KC_MS_WH_UP);
+    switch(get_highest_layer(layer_state)) {
+        case _LOWER:
+        case _LOWERNUM:
+        case _RAISE:
+        case _ADJUST:
+            if (clockwise) {
+                tap_code(KC_AUDIO_VOL_UP);
+            } else {
+                tap_code(KC_AUDIO_VOL_DOWN);
+            }
+            break;
+        default:
+            if (clockwise) {
+                tap_code(KC_MS_WH_DOWN);
+            } else {
+                tap_code(KC_MS_WH_UP);
+            }
+            break;
     }
     return true;
 }
