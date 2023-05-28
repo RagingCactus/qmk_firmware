@@ -34,6 +34,8 @@ enum custom_keycodes {
 // Tap Dance Keycodes
 enum tap_dances {
     TD_ALT_LOWEREDALT,
+    TD_LGUI_LOWEREDGUI,
+    TD_RGUI_LOWEREDGUI,
     TD_HRESET, // Hold reset
 };
 
@@ -54,6 +56,16 @@ typedef struct {
 
 // Create a global instance of the tapdance state type
 static td_tap_t td_lalt_state = {
+    .did_enable_layer = false,
+    .state = TD_NONE
+};
+
+static td_tap_t td_lgui_state = {
+    .did_enable_layer = false,
+    .state = TD_NONE
+};
+
+static td_tap_t td_rgui_state = {
     .did_enable_layer = false,
     .state = TD_NONE
 };
@@ -121,6 +133,98 @@ void alt_loweredalt_reset(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void lgui_loweredgui_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_lgui_state.state = cur_dance(state);
+    switch (td_lgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+            register_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_SINGLE_TAP:
+            tap_code16(KC_LGUI);
+            register_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            register_code16(KC_LGUI);
+            if (!layer_state_is(_LOWER)) {
+                layer_on(_LOWER);
+                td_lgui_state.did_enable_layer = true;
+            }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            break;
+        default:
+            break;
+    }
+}
+
+void lgui_loweredgui_reset(qk_tap_dance_state_t *state, void *user_data) {
+    td_lgui_state.state = cur_dance(state);
+    switch (td_lgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+        case TD_DOUBLE_SINGLE_TAP:
+            unregister_code16(KC_LGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            unregister_code16(KC_LGUI);
+            break;
+        default:
+            break;
+    }
+
+    if (td_lgui_state.did_enable_layer) {
+        layer_off(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        td_lgui_state.did_enable_layer = false;
+    }
+}
+
+void rgui_loweredgui_finished(qk_tap_dance_state_t *state, void *user_data) {
+    td_rgui_state.state = cur_dance(state);
+    switch (td_rgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+            register_code16(KC_RGUI);
+            break;
+        case TD_DOUBLE_SINGLE_TAP:
+            tap_code16(KC_RGUI);
+            register_code16(KC_RGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            register_code16(KC_RGUI);
+            if (!layer_state_is(_LOWER)) {
+                layer_on(_LOWER);
+                td_rgui_state.did_enable_layer = true;
+            }
+            update_tri_layer(_LOWER, _RAISE, _ADJUST);
+            break;
+        default:
+            break;
+    }
+}
+
+void rgui_loweredgui_reset(qk_tap_dance_state_t *state, void *user_data) {
+    td_rgui_state.state = cur_dance(state);
+    switch (td_rgui_state.state) {
+        case TD_SINGLE_TAP:
+        case TD_SINGLE_HOLD:
+        case TD_DOUBLE_SINGLE_TAP:
+            unregister_code16(KC_RGUI);
+            break;
+        case TD_DOUBLE_HOLD:
+            unregister_code16(KC_RGUI);
+            break;
+        default:
+            break;
+    }
+
+    if (td_rgui_state.did_enable_layer) {
+        layer_off(_LOWER);
+        update_tri_layer(_LOWER, _RAISE, _ADJUST);
+        td_rgui_state.did_enable_layer = false;
+    }
+}
+
 void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
     td_state_t tap_state = cur_dance(state);
     switch (tap_state) {
@@ -140,6 +244,8 @@ void hreset_finished(qk_tap_dance_state_t *state, void *user_data) {
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_ALT_LOWEREDALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, alt_loweredalt_finished, alt_loweredalt_reset),
+    [TD_LGUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lgui_loweredgui_finished, lgui_loweredgui_reset),
+    [TD_RGUI_LOWEREDGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, rgui_loweredgui_finished, rgui_loweredgui_reset),
     [TD_HRESET] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, hreset_finished, NULL),
 };
 
@@ -155,6 +261,10 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+#define TDLALT TD(TD_ALT_LOWEREDALT)
+#define TDLGUI TD(TD_LGUI_LOWEREDGUI)
+#define TDRGUI TD(TD_RGUI_LOWEREDGUI)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Qwerty
@@ -163,17 +273,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * |      |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |LOWGUI|  GUI | TDALT| Lower|    Space    |Raise |AltGr | Win  |      | Ctrl |
+ * | Ctrl |TDLGUI|TDALT | SHIFT| Lower|    Space    |Raise |SFT/EN| ALTGR| GUI  | Ctrl |
  * `-----------------------------------------------------------------------------------'
- * TODO: consider moving a layer for meta stuff to the left of RCTL and use adjust as a normal functional layer
  */
 [_QWERTY] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,        KC_W,    KC_E,                  KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,     KC_P,     KC_BSPC, \
-  KC_TAB,  KC_A,        KC_S,    KC_D,                  KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,     KC_SCLN,  KC_QUOT, \
-  KC_LSFT, KC_Z,        KC_X,    KC_C,                  KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT,   KC_SLSH,  RSFT_T(KC_ENT), \
-  KC_LCTL, LOWERED_GUI, KC_LGUI, TD(TD_ALT_LOWEREDALT), LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
+  KC_ESC,   KC_Q,   KC_W,   KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,           KC_O,   KC_P,     KC_BSPC, \
+  KC_TAB,   KC_A,   KC_S,   KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,           KC_L,   KC_SCLN,  KC_QUOT, \
+  _______,  KC_Z,   KC_X,   KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM,        KC_DOT, KC_SLSH,  _______, \
+  KC_LCTL,  TDLGUI, TDLALT, KC_LSFT, LOWER,      KC_SPC,       RAISE,  RSFT_T(KC_ENT), KC_RALT, TDRGUI,  KC_RCTL \
 ),
 
 /* Game (Qwerty with no tapdances and stuff)
@@ -182,24 +291,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Tab  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
+ * |      |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |LOWGUI|  GUI | Alt  | Lower|    Space    |Raise |AltGr | Win  |      | Ctrl |
+ * | Ctrl |  LGUI| LALT | SHIFT| Lower|    Space    |Raise |ENTER | ALTGR| RGUI | Ctrl |
  * `-----------------------------------------------------------------------------------'
- * TODO: consider moving a layer for meta stuff to the left of RCTL and use adjust as a normal functional layer
  */
 [_GAME] = LAYOUT_planck_mit( \
-  KC_ESC,  KC_Q,        KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,    KC_O,     KC_P,     KC_BSPC, \
-  KC_TAB,  KC_A,        KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,    KC_L,     KC_SCLN,  KC_QUOT, \
-  KC_LSFT, KC_Z,        KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM, KC_DOT,   KC_SLSH,  KC_ENT, \
-  KC_LCTL, LOWERED_GUI, KC_LGUI, KC_LALT, LOWER,      KC_SPC,       RAISE,  KC_RALT, KC_RGUI,  _______,  KC_RCTL \
+  KC_ESC,   KC_Q,    KC_W,    KC_E,    KC_R,   KC_T,    KC_Y,    KC_U,   KC_I,     KC_O,    KC_P,     KC_BSPC, \
+  KC_TAB,   KC_A,    KC_S,    KC_D,    KC_F,   KC_G,    KC_H,    KC_J,   KC_K,     KC_L,    KC_SCLN,  KC_QUOT, \
+  _______,  KC_Z,    KC_X,    KC_C,    KC_V,   KC_B,    KC_N,    KC_M,   KC_COMM,  KC_DOT,  KC_SLSH,  _______, \
+  KC_LCTL,  KC_LGUI, KC_LALT, KC_LSFT, LOWER,      KC_SPC,       RAISE,  KC_ENT,   KC_RALT, KC_RGUI,  KC_RCTL \
 ),
 
-/* Lower   (switched to # because KP# were weird in terminal emulators)
+/* Lower
  * ,-----------------------------------------------------------------------------------.
  * |  `~  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |  Tab |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   4  |   5  |   6  |   .  |  *   |
+ * |      |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   4  |   5  |   6  |   .  |  *   |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |   1  |   2  |   3  |   0  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -210,13 +318,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    KC_GRV,   KC_1,     KC_2,    KC_3,    KC_4,    KC_5,    KC_6,     KC_7, KC_8,    KC_9,     KC_0,    _______, \
   _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,     KC_4, KC_5,    KC_6,     KC_DOT,  KC_ASTR, \
   _______,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,   KC_F12,    KC_1, KC_2,    KC_3,     KC_0   , _______, \
-  _______, _______, _______, _______, _______,          KC_0,     _______, KC_MINS, _______,  _______, KC_PLUS  \
+  _______, _______, _______, _______, _______,      _______,         _______, _______, _______,  _______, KC_PLUS  \
 ),
 
 
 /* Raise
  * ,-----------------------------------------------------------------------------------.
- * |      |      |  {   |  }   |  =   |      |      |  -   |  (   |  )   |      |  Del |
+ * |      |      |  {   |  }   |  =   |      |  {   |  }   |  (   |  )   |      |  Del |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Del  | PAUSE|      | PGUP | Home |      | Left | Down |  Up  | Right|  |   |   `  |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
@@ -226,28 +334,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_mit( \
-  _______,   _______,  KC_LCBR,  KC_RCBR, KC_EQL,   _______, _______, KC_MINS, KC_LPRN, KC_RPRN,  _______, KC_DEL, \
+  _______,   _______,  KC_LCBR,  KC_RCBR, KC_EQL,   _______, KC_LCBR, KC_LCBR, KC_LPRN, KC_RPRN,  _______, KC_DEL, \
    KC_DEL,   KC_PAUSE, _______,  KC_PGUP, KC_HOME,  _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,  KC_PIPE, KC_GRV, \
   _______,   KC_PSCR,  _______,  KC_PGDN, KC_END,   _______, KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC,  KC_BSLS, _______, \
-  _______,   KC_APP,   KC_APP,   _______, _______,        KC_INS,     _______,  KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
+  _______,   _______,   _______,   _______, _______,        KC_INS,     _______,  KC_HOME, KC_PGDN,  KC_PGUP, KC_END \
 ),
 
 /* Adjust (Lower + Raise)
  * ,--------------------------------------------------------------------------------------.
- * | C-A-I|Qwerty|      |      |HRESET|      |      |RGB N |RGB P    |LED + | LED -|C-A-D |
+ * | C-A-I|Qwerty|      |      |HRESET|      |RGBTOG|RGB N |RGB P    |LED + | LED -|C-A-D |
  * |------+------+------+------+------+-------------+------+---------+------+------+------|
  * | Caps |GAME  |      |Aud on|Audoff|      |      |      | PrtSc   |ScrLck| Break|      |
  * |------+------+------+------+------+------|------+------+---------+------+------+------|
  * |      |Voice-|Voice+|Mus on|Musoff| Prev | Next | Mute | VolDn   | VolUp|      |      |
  * |------+------+------+------+------+------+------+------+---------+------+------+------|
- * | Brite|      |      |      |      | Play/Pause  |      | RGB_TOG |RGB_Mod|HUE+|HUE- |
+ * | Brite|APP   |      |      |      | Play/Pause  |      | RGB_TOG |RGB_Mod|HUE+|HUE- |
  * `-----------------------------------------------------------------------------------'
  */
 [_ADJUST] = LAYOUT_planck_mit( \
-  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, TD(TD_HRESET), _______, _______, RGB_MOD, RGB_RMOD, RGB_VAI,RGB_VAD, LALT(LCTL(KC_DEL)), \
+  LALT(LCTL(KC_INS)), QWERTY,  _______, _______, TD(TD_HRESET), _______, RGB_TOG, RGB_MOD, RGB_RMOD, RGB_VAI,RGB_VAD, LALT(LCTL(KC_DEL)), \
   KC_CAPS,            GAME,    _______, AU_ON,   AU_OFF,        _______, _______, _______, KC_PSCR, KC_SLCK, KC_PAUS, _______, \
   _______,            MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,        KC_MPRV, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, _______, _______, \
-  RGB_TOG,            _______, _______, _______, _______,            KC_MPLY,     _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
+  RGB_TOG,            KC_APP, _______, _______, _______,            KC_MPLY,     _______, RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD \
 )
 };
 
