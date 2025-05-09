@@ -1,0 +1,5 @@
+#pragma once
+
+#define OLED_SCROLL_TIMEOUT 30000
+#define OLED_TIMEOUT 60000
+#define OLED_BRIGHTNESS 0
